@@ -5,35 +5,126 @@ import { Amplify } from 'aws-amplify';
 import { fetchAuthSession } from 'aws-amplify/auth'; 
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
+import { LayoutDashboard, Users, Calendar, FolderClock, LogOut, Search, Bell, Activity, Clock, AlertCircle, PlusCircle, Printer, X, MapPin, Building2, Star, Globe } from 'lucide-react';
 
-Amplify.configure({
-  Auth: { Cognito: { userPoolId: 'ap-south-1_p039t5AGU', userPoolClientId: '2c9mnkobjqfj0rk0b2dlc1tqvn' } }
-});
-
-const formFields = {
-  signUp: { name: { order: 1, label: 'Full Name', placeholder: 'Enter your full name', isRequired: true }, username: { order: 2 }, password: { order: 3 }, confirm_password: { order: 4 } },
-};
-
+Amplify.configure({ Auth: { Cognito: { userPoolId: 'ap-south-1_p039t5AGU', userPoolClientId: '2c9mnkobjqfj0rk0b2dlc1tqvn' } } });
+const formFields = { signUp: { name: { order: 1, label: 'Full Name', placeholder: 'Enter your full name', isRequired: true }, username: { order: 2 }, password: { order: 3 }, confirm_password: { order: 4 } } };
 const allTimeSlots = ["09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM", "04:30 PM"];
 
+const NETWORK_HOSPITALS = [
+  { id: "HOSP-ABC", name: "City Central Hospital", location: "Downtown", color: "blue" },
+  { id: "HOSP-XYZ", name: "Westside Clinic", location: "West District", color: "indigo" },
+  { id: "HOSP-LMN", name: "Northpoint General", location: "North Hills", color: "emerald" }
+];
+
+// ==========================================
+// TRANSLATION DICTIONARY (i18n)
+// ==========================================
+const TRANSLATIONS = {
+  en: {
+    city_wide_network: "City-Wide Network",
+    find_a_hospital: "Find a Hospital",
+    select_location: "Select a partnered location below to see live wait times and book your visit.",
+    walk_in: "Walk-in",
+    schedule: "Schedule",
+    live_queue: "Live Queue",
+    waiting: "waiting",
+    est_wait: "Est. Wait",
+    min: "min",
+    walk_in_triage: "Walk-in Triage",
+    checked_into: "Checked into:",
+    change_hospital: "Change Hospital",
+    full_name: "Full Legal Name",
+    email_presc: "Email (For Digital Prescription)",
+    phone_queue: "Phone (e.g. +919876543210)",
+    symptoms_desc: "Describe your symptoms in detail...",
+    submit_ticket: "Submit & Get Ticket",
+    processing: "Processing AI Triage...",
+    digital_ticket: "Digital Queue Ticket",
+    routed_to: "Routed to:",
+    position: "Position",
+    your_turn: "It's your turn!",
+    proceed_doctor: "Please proceed to the doctor's office.",
+    leave_queue: "Leave Queue",
+    visit_complete: "Visit Complete",
+    feedback_prompt: "How was your experience with the doctor?",
+    feedback_saved: "Feedback Saved!",
+    return_home: "Return to Home"
+  },
+  hi: {
+    city_wide_network: "शहर-व्यापी नेटवर्क",
+    find_a_hospital: "अस्पताल खोजें",
+    select_location: "लाइव वेट टाइम देखने और अपना अपॉइंटमेंट बुक करने के लिए नीचे एक अस्पताल चुनें।",
+    walk_in: "वॉक-इन",
+    schedule: "शेड्यूल",
+    live_queue: "लाइव कतार",
+    waiting: "प्रतीक्षा में",
+    est_wait: "अनुमानित समय",
+    min: "मिनट",
+    walk_in_triage: "वॉक-इन ट्राइएज",
+    checked_into: "अस्पताल:",
+    change_hospital: "अस्पताल बदलें",
+    full_name: "पूरा नाम",
+    email_presc: "ईमेल (पर्चे के लिए)",
+    phone_queue: "फ़ोन (उदा. +919876543210)",
+    symptoms_desc: "अपने लक्षणों का विस्तार से वर्णन करें...",
+    submit_ticket: "सबमिट करें और टिकट लें",
+    processing: "AI ट्राइएज चल रहा है...",
+    digital_ticket: "डिजिटल कतार टिकट",
+    routed_to: "विभाग:",
+    position: "कतार में स्थान",
+    your_turn: "अब आपकी बारी है!",
+    proceed_doctor: "कृपया डॉक्टर के केबिन में जाएं।",
+    leave_queue: "कतार छोड़ें",
+    visit_complete: "परामर्श पूर्ण",
+    feedback_prompt: "डॉक्टर के साथ आपका अनुभव कैसा रहा?",
+    feedback_saved: "प्रतिक्रिया सहेजी गई!",
+    return_home: "होम पर लौटें"
+  },
+  gu: {
+    city_wide_network: "શહેર-વ્યાપી નેટવર્ક",
+    find_a_hospital: "હોસ્પિટલ શોધો",
+    select_location: "લાઇવ વેઇટ ટાઇમ જોવા અને તમારી મુલાકાત બુક કરવા માટે નીચે એક હોસ્પિટલ પસંદ કરો.",
+    walk_in: "વૉક-ઇન",
+    schedule: "શેડ્યૂલ",
+    live_queue: "લાઇવ કતાર",
+    waiting: "પ્રતીક્ષામાં",
+    est_wait: "અંદાજિત સમય",
+    min: "મિનિટ",
+    walk_in_triage: "વૉક-ઇન ટ્રાયજ",
+    checked_into: "હોસ્પિટલ:",
+    change_hospital: "હોસ્પિટલ બદલો",
+    full_name: "પૂરું નામ",
+    email_presc: "ઇમેઇલ (પ્રિસ્ક્રિપ્શન માટે)",
+    phone_queue: "ફોન (દા.ત. +919876543210)",
+    symptoms_desc: "તમારા લક્ષણોનું વિગતવાર વર્ણન કરો...",
+    submit_ticket: "સબમિટ કરો અને ટિકિટ મેળવો",
+    processing: "AI ટ્રાયજ ચાલી રહ્યું છે...",
+    digital_ticket: "ડિજિટલ કતાર ટિકિટ",
+    routed_to: "વિભાગ:",
+    position: "કતારમાં સ્થાન",
+    your_turn: "હવે તમારો વારો છે!",
+    proceed_doctor: "કૃપા કરીને ડૉક્ટરની કેબિનમાં જાઓ.",
+    leave_queue: "કતાર છોડો",
+    visit_complete: "મુલાકાત પૂર્ણ",
+    feedback_prompt: "ડૉક્ટર સાથે તમારો અનુભવ કેવો રહ્યો?",
+    feedback_saved: "પ્રતિસાદ સાચવ્યો!",
+    return_home: "હોમ પર પાછા ફરો"
+  }
+};
+
 const getTodayDateString = () => {
-  const now = new Date();
-  const offset = now.getTimezoneOffset();
+  const now = new Date(); const offset = now.getTimezoneOffset();
   return new Date(now.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
 };
 
 const isSlotInPast = (slotTimeStr: string, selectedDateStr: string) => {
   const todayStr = getTodayDateString();
-  if (selectedDateStr < todayStr) return true;
-  if (selectedDateStr > todayStr) return false;
-  const now = new Date();
-  const [time, modifier] = slotTimeStr.split(' ');
-  let [hours, minutes] = time.split(':');
-  let parsedHours = parseInt(hours, 10);
-  if (parsedHours === 12 && modifier === 'AM') parsedHours = 0;
-  if (parsedHours < 12 && modifier === 'PM') parsedHours += 12;
-  const slotTime = new Date();
-  slotTime.setHours(parsedHours, parseInt(minutes, 10), 0, 0);
+  if (selectedDateStr < todayStr) return true; if (selectedDateStr > todayStr) return false;
+  const now = new Date(); const [time, modifier] = slotTimeStr.split(' ');
+  let [hours, minutes] = time.split(':'); let parsedHours = parseInt(hours, 10);
+  if (parsedHours === 12 && modifier === 'AM') parsedHours = 0; if (parsedHours < 12 && modifier === 'PM') parsedHours += 12;
+  const slotTime = new Date(); slotTime.setHours(parsedHours, parseInt(minutes, 10), 0, 0);
   return slotTime < now;
 };
 
@@ -41,18 +132,21 @@ const isSlotInPast = (slotTimeStr: string, selectedDateStr: string) => {
 // DASHBOARD COMPONENT
 // ==========================================
 function DashboardApp({ signOut }: { signOut: any }) {
-
-  
-const [myTicket, setMyTicket] = useState<{name: string, department: string} | null>(null);
-  // NEW: Holds the real-time calculated doctor speed!
-  const [realAvgConsultTime, setRealAvgConsultTime] = useState(12);  const [patients, setPatients] = useState<any[]>([]);
+  const [patients, setPatients] = useState<any[]>([]);
   const [appointmentList, setAppointmentList] = useState<any[]>([]);
+  const [cityWideQueue, setCityWideQueue] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [isDoctor, setIsDoctor] = useState(false);
   
-  const [viewMode, setViewMode] = useState<"Live" | "History" | "Book" | "Appointments">("Live");
+  // Language State
+  const [lang, setLang] = useState<'en' | 'hi' | 'gu'>('en');
+  const t = (key: keyof typeof TRANSLATIONS.en) => TRANSLATIONS[lang][key] || TRANSLATIONS.en[key];
+
+  const [activeHospitalId, setActiveHospitalId] = useState<string>("HOSP-ABC"); 
+  const [activeTab, setActiveTab] = useState("City View");
   const [selectedDept, setSelectedDept] = useState("General");
   const [searchTerm, setSearchTerm] = useState("");
+  const [toast, setToast] = useState<{show: boolean, msg: string, type: 'success' | 'error'}>({ show: false, msg: '', type: 'success' });
 
   const [bookingDate, setBookingDate] = useState("");
   const [bookedTimeSlots, setBookedTimeSlots] = useState<string[]>([]);
@@ -60,17 +154,22 @@ const [myTicket, setMyTicket] = useState<{name: string, department: string} | nu
   const [showSlots, setShowSlots] = useState(false);
 
   const [treatingPatient, setTreatingPatient] = useState<any | null>(null);
-  const [prescriptionData, setPrescriptionData] = useState({
-    diagnosis: "",
-    medicines: [{ name: "", dosage: "", duration: "" }]
-  });
-
-  // --- NEW: EMR TIMELINE STATE ---
+  const [prescriptionData, setPrescriptionData] = useState({ diagnosis: "", medicines: [{ name: "", dosage: "", duration: "" }] });
   const [patientTimeline, setPatientTimeline] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
 
-  const [formData, setFormData] = useState({ name: '', email: '', age: '', address: '', symptoms: '', isEmergency: false });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', age: '', address: '', symptoms: '', isEmergency: false });
+  const [myTicket, setMyTicket] = useState<{name: string, department: string, hospitalId: string, Timestamp: string} | null>(null);
+  const [realAvgConsultTime, setRealAvgConsultTime] = useState(12);
+  
+  const [ratingSubmitted, setRatingSubmitted] = useState(false);
+  const [hoverRating, setHoverRating] = useState(0);
+
   const todayDateString = getTodayDateString();
+
+  const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
+    setToast({ show: true, msg, type }); setTimeout(() => setToast({ show: false, msg: '', type: 'success' }), 4000);
+  };
 
   useEffect(() => {
     const checkUserRole = async () => {
@@ -78,7 +177,11 @@ const [myTicket, setMyTicket] = useState<{name: string, department: string} | nu
         const { tokens } = await fetchAuthSession(); 
         const accessGroups = (tokens?.accessToken?.payload['cognito:groups'] as string[]) || [];
         const idGroups = (tokens?.idToken?.payload['cognito:groups'] as string[]) || [];
-        if ([...accessGroups, ...idGroups].includes('Doctors')) setIsDoctor(true);
+        if ([...accessGroups, ...idGroups].includes('Doctors')) {
+          setIsDoctor(true); setActiveTab("Dashboard");
+        } else {
+          setActiveTab("City View"); 
+        }
       } catch (error) { console.error("Error checking role:", error); }
     };
     checkUserRole();
@@ -89,12 +192,16 @@ const [myTicket, setMyTicket] = useState<{name: string, department: string} | nu
     try {
       if (mode === "Appointments") {
         const d = bookingDate || todayDateString;
-        const response = await fetch(`/api/queue?type=appointments&department=${dept}&date=${d}`);
+        const response = await fetch(`/api/queue?type=appointments&department=${dept}&date=${d}&hospitalId=${activeHospitalId}`);
         const data = await response.json();
         if (Array.isArray(data)) setAppointmentList(data);
+      } else if (mode === "City View") {
+        const response = await fetch(`/api/queue?type=all_active`);
+        const data = await response.json();
+        if (Array.isArray(data)) setCityWideQueue(data);
       } else {
-        const targetDept = mode === "Live" ? dept : "Archive";
-        const response = await fetch(`/api/queue?department=${targetDept}`);
+        const targetDept = mode === "Archive" ? "Archive" : dept;
+        const response = await fetch(`/api/queue?department=${targetDept}&hospitalId=${activeHospitalId}`);
         const data = await response.json();
         if (Array.isArray(data)) setPatients(data);
       }
@@ -103,170 +210,140 @@ const [myTicket, setMyTicket] = useState<{name: string, department: string} | nu
   };
 
   useEffect(() => {
-    fetchQueue(viewMode, selectedDept, false);
+    const fetchTarget = activeTab === "Appointments" ? "Appointments" : (activeTab === "Archive" ? "Archive" : (activeTab === "City View" ? "City View" : "Live"));
+    const fetchDept = (activeTab === "My Ticket" && myTicket) ? myTicket.department : selectedDept;
+    
+    fetchQueue(fetchTarget, fetchDept, false);
     const intervalId = setInterval(() => {
-      if ((viewMode === "Live" || viewMode === "Appointments") && !treatingPatient) {
-        fetchQueue(viewMode, selectedDept, true);
+      if ((activeTab === "Dashboard" || activeTab === "Appointments" || activeTab === "City View" || activeTab === "My Ticket") && !treatingPatient) {
+        fetchQueue(fetchTarget, fetchDept, true);
       }
     }, 5000);
     return () => clearInterval(intervalId);
-  }, [viewMode, selectedDept, bookingDate, treatingPatient]);
+  }, [activeTab, selectedDept, bookingDate, treatingPatient, activeHospitalId, myTicket]);
 
   const handleInputChange = (e: any) => {
     const { name, value, type, checked } = e.target;
     setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value });
   };
 
+  // ==========================================
+  // PATIENT ACTIONS
+  // ==========================================
+  const selectHospitalForVisit = (hospitalId: string, type: "Walk-in" | "Schedule") => {
+    setActiveHospitalId(hospitalId); setActiveTab(type);
+  };
+
   const checkAvailability = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!bookingDate) return alert("Please select a date first.");
+    if (!bookingDate) return showToast("Please select a date first.", "error");
     setLoading(true);
     try {
-      const response = await fetch(`/api/queue?type=appointments&department=${selectedDept}&date=${bookingDate}`);
+      const response = await fetch(`/api/queue?type=appointments&department=${selectedDept}&date=${bookingDate}&hospitalId=${activeHospitalId}`);
       const data = await response.json();
-      if (!response.ok) {
-        alert(`AWS Backend Error: ${data.details || data.error}`);
-        setLoading(false); return;
-      }
-      const takenSlots = Array.isArray(data) ? data.map((app: any) => app.timeSlot) : [];
-      setBookedTimeSlots(takenSlots);
+      if (!response.ok) { showToast(`Error: ${data.details || data.error}`, "error"); setLoading(false); return; }
+      setBookedTimeSlots(Array.isArray(data) ? data.map((app: any) => app.timeSlot) : []);
       setShowSlots(true);
-    } catch (error) { alert("Network error. Could not load available slots."); }
+    } catch (error) { showToast("Network error.", "error"); }
     setLoading(false);
   };
 
   const confirmBooking = async () => {
-    if (!selectedTimeSlot || !formData.name || !formData.symptoms) return alert("Please fill out your name, symptoms, and select a time slot.");
+    if (!selectedTimeSlot || !formData.name || !formData.symptoms) return showToast("Please fill all details.", "error");
     setLoading(true);
     try {
       const response = await fetch('/api/queue', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: "bookAppointment", department: selectedDept, date: bookingDate, timeSlot: selectedTimeSlot, patientName: formData.name, email: formData.email, symptoms: formData.symptoms })
+        body: JSON.stringify({ action: "bookAppointment", department: selectedDept, date: bookingDate, timeSlot: selectedTimeSlot, patientName: formData.name, email: formData.email, phone: formData.phone, symptoms: formData.symptoms, hospitalId: activeHospitalId })
       });
       const responseData = await response.json();
       if (!response.ok) {
-        alert(`❌ Booking Failed: ${responseData.details || "Slot taken!"}`);
-        checkAvailability({ preventDefault: () => {} } as React.FormEvent); 
+        showToast(`Booking Failed: ${responseData.details}`, "error"); checkAvailability({ preventDefault: () => {} } as React.FormEvent); 
       } else {
-        alert("✅ Appointment Booked Successfully!");
-        setFormData({ name: '', email: '', age: '', address: '', symptoms: '', isEmergency: false });
-        setSelectedTimeSlot(""); setShowSlots(false); setBookingDate("");
+        showToast("✅ Appointment Booked Successfully!");
+        setFormData({ name: '', email: '', phone: '', age: '', address: '', symptoms: '', isEmergency: false });
+        setSelectedTimeSlot(""); setShowSlots(false); setBookingDate(""); setActiveTab("City View");
       }
-    } catch (error) { console.error("Error booking:", error); }
+    } catch (error) { showToast("Error booking appointment.", "error"); }
     setLoading(false);
   };
 
- const addPatient = async (e: React.FormEvent) => {
+  const calculateRealWaitTime = async (dept: string, hId: string) => {
+    try {
+      const res = await fetch(`/api/queue?department=Archive&hospitalId=${hId}`);
+      const data = await res.json();
+      const deptHistory = data.filter((p: any) => p.department === dept && p.calledAt);
+      deptHistory.sort((a: any, b: any) => new Date(b.calledAt).getTime() - new Date(a.calledAt).getTime());
+      const last5 = deptHistory.slice(0, 5);
+      if (last5.length >= 2) {
+        let totalTimeDiff = 0, validPairs = 0;
+        for (let i = 0; i < last5.length - 1; i++) {
+          const diffInMinutes = (new Date(last5[i].calledAt).getTime() - new Date(last5[i+1].calledAt).getTime()) / 60000;
+          if (diffInMinutes > 0 && diffInMinutes < 60) { totalTimeDiff += diffInMinutes; validPairs++; }
+        }
+        if (validPairs > 0) setRealAvgConsultTime(Math.max(5, Math.round(totalTimeDiff / validPairs)));
+      }
+    } catch (error) { console.error(error); }
+  };
+
+  const addPatient = async (e: React.FormEvent) => {
     e.preventDefault(); 
     if (!formData.name || !formData.symptoms) return;
     setLoading(true); 
     try {
       const response = await fetch('/api/queue', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) 
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({...formData, hospitalId: activeHospitalId }) 
       });
       const responseData = await response.json();
-      if (!response.ok) return alert(`AWS Backend Error: ${responseData.details}`);
+      if (!response.ok) return showToast(`Backend Error: ${responseData.details}`, "error");
       
       const assignedDept = responseData.department || "General";
+      setMyTicket({ name: formData.name, department: assignedDept, hospitalId: activeHospitalId, Timestamp: responseData.Timestamp });
+      setRatingSubmitted(false);
+      calculateRealWaitTime(assignedDept, activeHospitalId);
       
-      // 1. Give the patient their ticket
-      setMyTicket({ name: formData.name, department: assignedDept });
-      
-      // 2. NEW: Fire the calculator to check the doctor's real-time speed!
-      calculateRealWaitTime(assignedDept);
-      
-      setFormData({ name: '', email: '', age: '', address: '', symptoms: '', isEmergency: false });
+      setFormData({ name: '', email: '', phone: '', age: '', address: '', symptoms: '', isEmergency: false });
       if (responseData.department) setSelectedDept(responseData.department);
-      setViewMode("Live"); 
-    } catch (error) { console.error("Error adding patient:", error); }
+      setActiveTab("My Ticket"); 
+      showToast("Triage complete! You are in the queue.");
+    } catch (error) { showToast("Error submitting triage.", "error"); }
     setLoading(false);
   };
 
-// ==========================================
-  // REAL-TIME ROLLING AVERAGE CALCULATOR
-  // ==========================================
-  const calculateRealWaitTime = async (dept: string) => {
+  const submitRating = async (stars: number) => {
+    if (!myTicket) return;
+    setRatingSubmitted(true);
     try {
-      // 1. Fetch the hospital's entire history
-      const res = await fetch('/api/queue?department=Archive');
-      const data = await res.json();
-      
-      // 2. Filter for ONLY the department the patient is waiting for
-      const deptHistory = data.filter((p: any) => p.department === dept && p.calledAt);
-      
-      // 3. Sort so the most recently treated patients are at the top
-      deptHistory.sort((a: any, b: any) => new Date(b.calledAt).getTime() - new Date(a.calledAt).getTime());
-      
-      // 4. Grab the last 5 patients the doctor saw
-      const last5Patients = deptHistory.slice(0, 5);
-
-      if (last5Patients.length >= 2) {
-        let totalTimeDiff = 0;
-        let validPairs = 0;
-
-        // 5. Calculate the exact minutes between each patient leaving the room
-        for (let i = 0; i < last5Patients.length - 1; i++) {
-          const timeFinished = new Date(last5Patients[i].calledAt).getTime();
-          const previousFinished = new Date(last5Patients[i+1].calledAt).getTime();
-          
-          const diffInMinutes = (timeFinished - previousFinished) / (1000 * 60);
-          
-          // Sanity check: If the doctor took a lunch break (e.g., > 60 mins), ignore that gap
-          if (diffInMinutes > 0 && diffInMinutes < 60) {
-            totalTimeDiff += diffInMinutes;
-            validPairs++;
-          }
-        }
-
-        // 6. Set the new, highly accurate real-time average!
-        if (validPairs > 0) {
-          const actualSpeed = Math.round(totalTimeDiff / validPairs);
-          // Don't let it drop below a safe minimum of 5 minutes
-          setRealAvgConsultTime(Math.max(5, actualSpeed));
-        }
-      }
-    } catch (error) {
-      console.error("Failed to calculate real wait time:", error);
-    }
+      await fetch('/api/queue', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ action: "submitRating", Timestamp: myTicket.Timestamp, rating: stars }) 
+      });
+      showToast(t('feedback_saved'));
+    } catch (error) { console.error("Rating failed", error); }
   };
 
-
-const startTreatment = async (patient: any) => {
+  // ==========================================
+  // DOCTOR ACTIONS
+  // ==========================================
+  const startTreatment = async (patient: any) => {
     setTreatingPatient(patient);
     setPrescriptionData({ diagnosis: "", medicines: [{ name: "", dosage: "", duration: "" }] });
-    setPatientTimeline([]);
-    setLoadingHistory(true);
-
+    setPatientTimeline([]); setLoadingHistory(true);
     try {
-      const res = await fetch('/api/queue?department=Archive');
+      const res = await fetch(`/api/queue?department=Archive&hospitalId=${activeHospitalId}`);
       const data = await res.json();
-      
       const history = data.filter((p: any) => {
-        const currentEmail = (patient.email || "").trim().toLowerCase();
-        const pastEmail = (p.email || "").trim().toLowerCase();
-        const currentName = (patient.patientName || "").trim().toLowerCase();
-        const pastName = (p.patientName || "").trim().toLowerCase();
-
-        // STRICT CHECK 1: The names MUST match exactly.
-        if (currentName !== pastName) return false;
-
-        // STRICT CHECK 2: If they both have an email, the emails MUST also match.
-        if (currentEmail !== "" && pastEmail !== "") {
-          if (currentEmail !== pastEmail) return false;
-        }
-
-        // If it passes both strict checks, it's the exact same person!
+        const cEmail = (patient.email || "").trim().toLowerCase();
+        const pEmail = (p.email || "").trim().toLowerCase();
+        const cName = (patient.patientName || "").trim().toLowerCase();
+        const pName = (p.patientName || "").trim().toLowerCase();
+        if (cName !== pName) return false;
+        if (cEmail !== "" && pEmail !== "") if (cEmail !== pEmail) return false;
         return true; 
       });
-
-      const sortedHistory = history.sort((a: any, b: any) => 
-        new Date(b.Timestamp).getTime() - new Date(a.Timestamp).getTime()
-      );
-
-      setPatientTimeline(sortedHistory);
-    } catch (error) {
-      console.error("Failed to load patient history:", error);
-    }
+      setPatientTimeline(history.sort((a: any, b: any) => new Date(b.Timestamp).getTime() - new Date(a.Timestamp).getTime()));
+    } catch (error) { console.error("Failed to load patient history:", error); }
     setLoadingHistory(false);
   };
 
@@ -283,377 +360,305 @@ const startTreatment = async (patient: any) => {
   const finishTreatment = async () => {
     try {
       window.print();
-      const completedPatient = {
-        ...treatingPatient,
-        diagnosis: prescriptionData.diagnosis,
-        medicines: prescriptionData.medicines.filter(m => m.name !== "") 
-      };
-
-      const response = await fetch('/api/queue', {
-        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(completedPatient) 
-      });
-
-      const data = await response.json();
-      alert(`Backend Status: ${data.message}\n\nEmail Status: ${data.emailStatus || "Email sent successfully"}`);
-
+      const completedPatient = { ...treatingPatient, diagnosis: prescriptionData.diagnosis, medicines: prescriptionData.medicines.filter(m => m.name !== "") };
+      await fetch('/api/queue', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(completedPatient) });
+      showToast("Prescription saved & emailed securely!");
       setTreatingPatient(null);
-      fetchQueue(viewMode, selectedDept, false); 
-    } catch (error) { console.error("Error saving prescription:", error); }
-  };
-
-  const getUrgencyColor = (urgency: string) => {
-    if (urgency === "High") return "bg-red-100 text-red-800 border-red-200";
-    if (urgency === "Medium") return "bg-orange-100 text-orange-800 border-orange-200";
-    if (urgency === "Low") return "bg-green-100 text-green-800 border-green-200";
-    return "bg-slate-100 text-slate-800 border-slate-200"; 
+      fetchQueue("Live", selectedDept, false); 
+    } catch (error) { showToast("Error saving prescription.", "error"); }
   };
 
   const filteredPatients = patients.filter(p => {
-    const searchLower = searchTerm.toLowerCase();
-    return (p.patientName || "").toLowerCase().includes(searchLower) || (p.symptoms || "").toLowerCase().includes(searchLower);
+    const s = searchTerm.toLowerCase();
+    return (p.patientName || "").toLowerCase().includes(s) || (p.symptoms || "").toLowerCase().includes(s);
   });
 
-// ==========================================
-  // REAL-TIME QUEUE MATH
-  // ==========================================
-  let myQueuePosition = 0;
-  let patientsAhead = 0;
-  let estimatedWait = 0;
-  
-  if (!isDoctor && myTicket && viewMode === "Live") {
-    const deptQueue = patients.filter(p => p.department === myTicket.department);
+  const getUrgencyBadge = (urgency: string) => {
+    if (urgency === "High") return <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-md flex items-center gap-1"><AlertCircle size={14}/> HIGH</span>;
+    if (urgency === "Medium") return <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-md">MEDIUM</span>;
+    return <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-md">LOW</span>;
+  };
+
+  let myQueuePosition = 0, estimatedWait = 0;
+  if (!isDoctor && myTicket && activeTab === "My Ticket") {
+    const deptQueue = patients.filter(p => p.department === myTicket.department && p.hospitalId === myTicket.hospitalId);
     deptQueue.sort((a, b) => new Date(a.Timestamp).getTime() - new Date(b.Timestamp).getTime());
     const myIndex = deptQueue.findIndex(p => (p.patientName || "").toLowerCase() === myTicket.name.toLowerCase());
-    
     if (myIndex !== -1) {
       myQueuePosition = myIndex + 1; 
-      patientsAhead = myIndex;       
-      
-      // NO MORE MAGIC NUMBERS! Multiply by the Doctor's exact real-time speed.
-      estimatedWait = patientsAhead * realAvgConsultTime; 
+      estimatedWait = myIndex * realAvgConsultTime; 
     }
   }
 
+  const emergenciesCount = patients.filter(p => p.urgency === 'High').length;
+  const activeHospitalName = NETWORK_HOSPITALS.find(h => h.id === activeHospitalId)?.name;
+
+  const ratedArchivePatients = patients.filter(p => p.rating && p.rating > 0);
+  const avgHospitalRating = ratedArchivePatients.length > 0 
+    ? (ratedArchivePatients.reduce((sum, p) => sum + p.rating, 0) / ratedArchivePatients.length).toFixed(1) 
+    : "N/A";
 
   return (
-    <>
-      <div className="print:hidden w-full max-w-5xl bg-white p-8 rounded-lg shadow-md border border-slate-200">
-        
-        <div className="flex justify-between items-center mb-6 border-b pb-4">
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-semibold text-slate-800">
-                {isDoctor ? "🩺 Doctor Dashboard" : "Hospital Triage"}
-              </h2>
-              <span className="flex items-center gap-1 text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-200">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> LIVE SYNC
-              </span>
-            </div>
-            <button onClick={() => { if (signOut) signOut(); }} className="text-sm text-red-500 hover:underline">Sign Out</button>
-        </div>
-
-        <div className="flex gap-4 mb-6 border-b pb-2">
-          <button onClick={() => setViewMode("Live")} className={`font-semibold pb-2 px-2 ${viewMode === "Live" ? "text-blue-600 border-b-2 border-blue-600" : "text-slate-500 hover:text-slate-700"}`}>
-            {isDoctor ? "Live Queue" : "Walk-in Triage"}
-          </button>
+    <div className="flex h-screen w-full bg-slate-50 font-sans text-slate-900 overflow-hidden">
+      
+      <aside className="print:hidden w-64 bg-slate-900 text-slate-300 flex flex-col shadow-2xl z-20 shrink-0">
+        <div className="h-20 flex items-center px-6 bg-slate-950 border-b border-slate-800"><Activity className="text-blue-500 mr-3" size={28} /><h1 className="text-xl font-black text-white tracking-tight">Smart<span className="text-blue-500">OPD</span></h1></div>
+        <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
+          <p className="px-2 text-xs font-bold tracking-widest text-slate-500 mb-4 uppercase">Menu</p>
           {isDoctor ? (
             <>
-              <button onClick={() => setViewMode("Appointments")} className={`font-semibold pb-2 px-2 ${viewMode === "Appointments" ? "text-blue-600 border-b-2 border-blue-600" : "text-slate-500 hover:text-slate-700"}`}>Appointments</button>
-              <button onClick={() => setViewMode("History")} className={`font-semibold pb-2 px-2 ${viewMode === "History" ? "text-blue-600 border-b-2 border-blue-600" : "text-slate-500 hover:text-slate-700"}`}>Patient Archive</button>
+              <button onClick={() => setActiveTab("Dashboard")} className={`w-full flex items-center px-4 py-3 rounded-xl transition-colors ${activeTab === "Dashboard" ? "bg-blue-600 text-white shadow-md" : "hover:bg-slate-800 hover:text-white"}`}><LayoutDashboard size={20} className="mr-3" /> Live Queue</button>
+              <button onClick={() => setActiveTab("Appointments")} className={`w-full flex items-center px-4 py-3 rounded-xl transition-colors ${activeTab === "Appointments" ? "bg-blue-600 text-white shadow-md" : "hover:bg-slate-800 hover:text-white"}`}><Calendar size={20} className="mr-3" /> Appointments</button>
+              <button onClick={() => setActiveTab("Archive")} className={`w-full flex items-center px-4 py-3 rounded-xl transition-colors ${activeTab === "Archive" ? "bg-blue-600 text-white shadow-md" : "hover:bg-slate-800 hover:text-white"}`}><FolderClock size={20} className="mr-3" /> Patient EMR Archive</button>
             </>
           ) : (
-            <button onClick={() => setViewMode("Book")} className={`font-semibold pb-2 px-2 ${viewMode === "Book" ? "text-blue-600 border-b-2 border-blue-600" : "text-slate-500 hover:text-slate-700"}`}>Schedule Visit</button>
+            <>
+              <button onClick={() => setActiveTab("City View")} className={`w-full flex items-center px-4 py-3 rounded-xl transition-colors ${activeTab === "City View" ? "bg-blue-600 text-white shadow-md" : "hover:bg-slate-800 hover:text-white"}`}><Building2 size={20} className="mr-3" /> Hospital Network</button>
+              {myTicket && <button onClick={() => setActiveTab("My Ticket")} className={`w-full flex items-center px-4 py-3 rounded-xl transition-colors ${activeTab === "My Ticket" ? "bg-blue-600 text-white shadow-md" : "hover:bg-slate-800 hover:text-white"}`}><Activity size={20} className="mr-3" /> Live Ticket Status</button>}
+            </>
           )}
-        </div>
+        </nav>
+        <div className="p-4 bg-slate-950 border-t border-slate-800"><button onClick={() => { if (signOut) signOut(); }} className="w-full flex items-center px-4 py-3 text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-xl transition-colors"><LogOut size={20} className="mr-3" /> Sign Out</button></div>
+      </aside>
 
-        {viewMode === "Book" && (
-          <div className="mb-8 p-6 bg-slate-50 border border-slate-200 rounded-lg shadow-inner">
-            <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">Patient Appointment Scheduler</h3>
-            <form onSubmit={checkAvailability} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div className="flex flex-col"><label className="text-xs font-bold text-slate-500 uppercase">Full Name</label><input type="text" name="name" required value={formData.name} onChange={handleInputChange} className="p-2 border border-slate-300 rounded focus:border-blue-500 outline-none" placeholder="John Doe" /></div>
-              <div className="flex flex-col"><label className="text-xs font-bold text-slate-500 uppercase">Email Address</label><input type="email" name="email" required value={formData.email} onChange={handleInputChange} className="p-2 border border-slate-300 rounded focus:border-blue-500 outline-none" placeholder="patient@example.com" /></div>
-                   <select value={selectedDept} onChange={(e) => setSelectedDept(e.target.value)} className="p-2 border border-slate-300 rounded focus:border-blue-500 bg-white">
-  <option value="General">General</option>
-  <option value="Cardiology">Cardiology</option>
-  <option value="Pediatrics">Pediatrics</option>
-  <option value="Orthopedics">Orthopedics</option>
-  <option value="Neurology">Neurology</option>
-</select>
-              <div className="flex flex-col"><label className="text-xs font-bold text-slate-500 uppercase">Select Date</label><input type="date" required min={todayDateString} value={bookingDate} onChange={(e) => setBookingDate(e.target.value)} className="p-2 border border-slate-300 rounded focus:border-blue-500 outline-none" /></div>
-              <textarea name="symptoms" required value={formData.symptoms} onChange={handleInputChange} rows={2} className="md:col-span-2 p-2 border border-slate-300 rounded focus:border-blue-500 outline-none" placeholder="Reason for Visit..." />
-              {!showSlots && <button type="submit" disabled={loading} className="md:col-span-2 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded">Check Availability</button>}
-            </form>
-            {showSlots && (
-              <div className="mt-6 border-t border-slate-200 pt-6">
-                <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mb-6">
-                  {allTimeSlots.map((slot) => {
-                    const isDisabled = bookedTimeSlots.includes(slot) || isSlotInPast(slot, bookingDate);
-                    return <button key={slot} type="button" disabled={isDisabled} onClick={() => setSelectedTimeSlot(slot)} className={`py-2 px-1 text-sm font-semibold rounded border ${isDisabled ? 'bg-slate-200 text-slate-400 cursor-not-allowed line-through' : selectedTimeSlot === slot ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-700 hover:bg-indigo-50'}`}>{slot}</button>
-                  })}
-                </div>
-                {selectedTimeSlot && <button onClick={confirmBooking} disabled={loading} className="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded">Confirm {selectedTimeSlot}</button>}
+      <div className="print:hidden flex-1 flex flex-col min-w-0 overflow-hidden">
+        
+        {/* TOP HEADER */}
+        <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 z-10">
+          <div className="flex items-center gap-4 w-1/2">
+            {isDoctor ? (
+              <div className="flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-lg border border-indigo-100">
+                <Building2 size={18} className="text-indigo-600" /><span className="text-sm font-bold text-indigo-900 mr-2">Assigned Hospital:</span>
+                <select value={activeHospitalId} onChange={(e) => setActiveHospitalId(e.target.value)} className="bg-transparent font-black text-indigo-700 outline-none cursor-pointer">
+                  {NETWORK_HOSPITALS.map(h => <option key={h.id} value={h.id}>{h.name}</option>)}
+                </select>
+              </div>
+            ) : (<h2 className="text-xl font-black text-slate-800 flex items-center gap-2"><MapPin className="text-blue-600"/> {t('city_wide_network')}</h2>)}
+          </div>
+          
+          <div className="flex items-center gap-6">
+            {/* NEW: LANGUAGE SWITCHER */}
+            {!isDoctor && (
+              <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full">
+                <Globe size={16} className="text-slate-500" />
+                <select value={lang} onChange={(e: any) => setLang(e.target.value)} className="bg-transparent text-sm font-bold text-slate-700 outline-none cursor-pointer">
+                  <option value="en">English</option>
+                  <option value="hi">हिंदी</option>
+                  <option value="gu">ગુજરાતી</option>
+                </select>
               </div>
             )}
-          </div>
-        )}
 
-       
-       {/* IF PATIENT HAS NO TICKET: SHOW FORM */}
-        {!isDoctor && viewMode === "Live" && !myTicket && (
-          <div className="mb-8 p-6 bg-slate-50 border border-slate-200 rounded-lg shadow-inner">
-            <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">Walk-in Digital Intake</h3>
-            <form onSubmit={addPatient} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input type="text" name="name" required value={formData.name} onChange={handleInputChange} className="p-2 border border-slate-300 rounded outline-none" placeholder="Full Name" />
-              <input type="email" name="email" required value={formData.email} onChange={handleInputChange} className="p-2 border border-slate-300 rounded outline-none" placeholder="Email Address" />
-              <textarea name="symptoms" required value={formData.symptoms} onChange={handleInputChange} rows={2} className="md:col-span-2 p-2 border border-slate-300 rounded outline-none" placeholder="Symptoms..." />
-              <button type="submit" disabled={loading} className="md:col-span-2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded">Submit to AI Triage</button>
-            </form>
-          </div>
-        )}
-
-        {/* IF PATIENT HAS TICKET: SHOW LIVE STATUS */}
-        {!isDoctor && viewMode === "Live" && myTicket && (
-          <div className="mb-8 p-8 bg-blue-50 border border-blue-200 rounded-lg shadow-inner text-center">
-            <h3 className="text-2xl font-black text-blue-900 mb-1">Your Digital Ticket</h3>
-            <p className="text-slate-600 font-medium mb-6 uppercase tracking-widest text-sm">Routed to: <strong>{myTicket.department}</strong></p>
-            
-            {myQueuePosition > 0 ? (
-              <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-                 <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-                    <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-2">Queue Position</p>
-                    <p className="text-5xl font-black text-blue-600">#{myQueuePosition}</p>
-                 </div>
-                 <div className="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
-                    <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-2">Est. Wait Time</p>
-                    <p className="text-5xl font-black text-orange-500">{estimatedWait} <span className="text-lg font-bold text-slate-400">min</span></p>
-                 </div>
-              </div>
-            ) : (
-              <div className="bg-green-100 p-6 rounded-lg border border-green-300 max-w-md mx-auto">
-                <h4 className="text-2xl font-black text-green-800">It is your turn!</h4>
-                <p className="text-green-700 font-medium mt-2">The doctor is ready to see you, or your visit is complete.</p>
-                <button onClick={() => setMyTicket(null)} className="mt-6 px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded transition-colors shadow-sm">Start New Visit</button>
-              </div>
+            {(activeTab === "Dashboard" || activeTab === "Archive") && (
+              <select value={selectedDept} onChange={(e) => setSelectedDept(e.target.value)} className="py-2 px-4 bg-white border border-slate-200 rounded-full text-sm font-semibold shadow-sm outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                <option value="General">General Dept</option><option value="Cardiology">Cardiology</option><option value="Pediatrics">Pediatrics</option><option value="Orthopedics">Orthopedics</option><option value="Neurology">Neurology</option>
+              </select>
             )}
+            <button className="relative p-2 text-slate-400 hover:text-slate-600 transition-colors"><Bell size={22} />{isDoctor && emergenciesCount > 0 && <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse border-2 border-white"></span>}</button>
+            <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md">{isDoctor ? "Dr" : "P"}</div>
           </div>
-        )}
+        </header>
 
-        {viewMode !== "Book" && (
-          <div className="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-4">
-            <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-              {viewMode === "Appointments" ? <input type="date" value={bookingDate || todayDateString} onChange={(e) => setBookingDate(e.target.value)} className="p-2 text-sm border border-slate-300 rounded-md" /> : <input type="text" placeholder="Search..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="p-2 text-sm border border-slate-300 rounded-md" />}
-             
-<select value={selectedDept} onChange={(e) => setSelectedDept(e.target.value)} className="p-2 text-sm border border-slate-300 rounded-md bg-white">
-  <option value="General">General</option>
-  <option value="Cardiology">Cardiology</option>
-  <option value="Pediatrics">Pediatrics</option>
-  <option value="Orthopedics">Orthopedics</option>
-  <option value="Neurology">Neurology</option>
-</select>
-
+        <main className="flex-1 overflow-y-auto p-8 relative">
+          {toast.show && (
+            <div className={`fixed bottom-8 right-8 z-50 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-bottom-5 ${toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-emerald-600 text-white'}`}>
+              {toast.type === 'error' ? <AlertCircle size={20} /> : <Activity size={20} />}<p className="font-semibold">{toast.msg}</p>
             </div>
-          </div>
-        )}
+          )}
 
-        {viewMode !== "Book" && (
-          <div className="mb-6">
-            {(viewMode === "Appointments" ? appointmentList : filteredPatients).map((patient, index) => (
-              <li key={index} className="flex flex-col md:flex-row justify-between items-start md:items-center p-5 bg-white rounded-lg border border-slate-200 shadow-sm mb-3">
-                <div className="flex flex-col w-full md:w-3/4">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="font-bold text-slate-800 text-xl">{patient.patientName}</span>
-                    {viewMode === "Appointments" ? <span className="px-3 py-1 text-sm font-bold bg-indigo-100 text-indigo-800 rounded">⏱ {patient.timeSlot}</span> : patient.urgency ? <span className={`px-2 py-0.5 text-xs font-bold border rounded uppercase ${getUrgencyColor(patient.urgency)}`}>{patient.urgency}</span> : null}
+          {isDoctor && activeTab === "Dashboard" && (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"><div className="p-4 bg-blue-50 text-blue-600 rounded-xl"><Users size={24} /></div><div><p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Queue Total</p><p className="text-3xl font-black text-slate-800">{patients.length}</p></div></div>
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"><div className="p-4 bg-emerald-50 text-emerald-600 rounded-xl"><Clock size={24} /></div><div><p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Avg Wait</p><p className="text-3xl font-black text-slate-800">{realAvgConsultTime} <span className="text-lg">min</span></p></div></div>
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"><div className="p-4 bg-yellow-50 text-yellow-600 rounded-xl"><Star size={24} /></div><div><p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Patient Rating</p><p className="text-3xl font-black text-slate-800">{avgHospitalRating}</p></div></div>
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"><div className="p-4 bg-red-50 text-red-600 rounded-xl"><AlertCircle size={24} /></div><div><p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Emergencies</p><p className="text-3xl font-black text-slate-800">{emergenciesCount}</p></div></div>
+            </div>
+          )}
+
+          {!isDoctor && activeTab === "City View" && (
+            <div className="max-w-5xl mx-auto mt-6">
+              <div className="mb-10"><h2 className="text-4xl font-black text-slate-800 mb-3 tracking-tight">{t('find_a_hospital')}</h2><p className="text-lg text-slate-500">{t('select_location')}</p></div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {NETWORK_HOSPITALS.map(hospital => {
+                  const hospitalQueue = cityWideQueue.filter(p => p.hospitalId === hospital.id).length;
+                  const estWait = hospitalQueue * 12; 
+                  return (
+                    <div key={hospital.id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all transform hover:-translate-y-1 group">
+                      <div className={`w-12 h-12 rounded-xl mb-4 flex items-center justify-center bg-${hospital.color}-100 text-${hospital.color}-600`}><Building2 size={24} /></div>
+                      <h3 className="text-xl font-black text-slate-800 mb-1">{hospital.name}</h3>
+                      <p className="text-sm font-semibold text-slate-400 mb-6 flex items-center gap-1"><MapPin size={14}/> {hospital.location}</p>
+                      <div className="flex justify-between items-end mb-6 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <div><p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{t('live_queue')}</p><p className="text-2xl font-black text-slate-800">{hospitalQueue} <span className="text-sm text-slate-500 font-medium">{t('waiting')}</span></p></div>
+                        <div className="text-right"><p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{t('est_wait')}</p><p className={`text-2xl font-black ${estWait > 45 ? 'text-orange-500' : 'text-emerald-500'}`}>{estWait} <span className="text-sm font-medium">{t('min')}</span></p></div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => selectHospitalForVisit(hospital.id, "Walk-in")} className="flex-1 py-3 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white font-bold rounded-lg transition-colors">{t('walk_in')}</button>
+                        <button onClick={() => selectHospitalForVisit(hospital.id, "Schedule")} className="flex-1 py-3 bg-slate-50 hover:bg-slate-900 text-slate-700 hover:text-white font-bold rounded-lg transition-colors border border-slate-200 hover:border-slate-900">{t('schedule')}</button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {activeTab !== "City View" && activeTab !== "My Ticket" && activeTab !== "Walk-in" && activeTab !== "Schedule" && (
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+              {isDoctor && (activeTab === "Dashboard" || activeTab === "Archive") && (
+                <div className="p-0">
+                  <div className="px-8 py-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                    <h2 className="text-lg font-bold text-slate-800">{activeTab === "Dashboard" ? `${selectedDept} Waiting Room` : "Patient EMR Archive"}</h2>
+                    {activeTab === "Dashboard" && <span className="flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-full"><span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> LIVE SYNC</span>}
                   </div>
-                  {patient.symptoms && <span className="text-sm text-slate-600 block">Condition: <span className="text-slate-800">{patient.symptoms}</span></span>}
-                  
-                  {viewMode === "History" && patient.diagnosis && (
-                    <div className="mt-3 p-3 bg-slate-50 border border-slate-200 rounded text-sm">
-                      <strong className="block text-slate-800 mb-1">Diagnosis:</strong> <p className="mb-2 text-slate-600">{patient.diagnosis}</p>
+                  <div className="p-4">
+                    {loading ? Array(3).fill(0).map((_, i) => <div key={i} className="animate-pulse bg-slate-100 h-24 rounded-xl mb-3"></div>) : filteredPatients.length === 0 ? <div className="text-center py-20"><Activity size={48} className="mx-auto text-slate-300 mb-4" /><p className="text-lg font-semibold text-slate-500">The waiting room is clear.</p></div> : (
+                      <div className="space-y-3">
+                        {filteredPatients.map((patient, index) => (
+                          <div key={index} className="group flex flex-col md:flex-row justify-between items-center p-5 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                            <div className="flex-1"><div className="flex items-center gap-3 mb-1"><span className="font-bold text-slate-800 text-lg">{patient.patientName}</span>{activeTab === "Dashboard" && getUrgencyBadge(patient.urgency)}{activeTab === "Archive" && patient.rating > 0 && <span className="flex items-center text-yellow-500 text-sm font-bold ml-2"><Star size={14} fill="currentColor" className="mr-1"/> {patient.rating}</span>}</div><span className="text-sm text-slate-500 font-medium">Issue: <span className="text-slate-700">{patient.symptoms}</span></span></div>
+                            {activeTab === "Dashboard" && <button onClick={() => startTreatment(patient)} className="px-6 py-2.5 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold rounded-lg transition-colors ml-4 shrink-0">Treat Patient</button>}
+                            {activeTab === "Archive" && patient.diagnosis && <div className="text-right ml-4 max-w-sm"><p className="text-xs font-bold text-slate-400 uppercase mb-1">Diagnosis</p><p className="text-sm text-slate-700 truncate">{patient.diagnosis}</p></div>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {(activeTab === "Appointments" || activeTab === "Schedule") && (
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 max-w-4xl">
+              <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4"><h2 className="text-2xl font-bold text-slate-800">Schedule at {activeHospitalName}</h2>{!isDoctor && <button onClick={() => setActiveTab("City View")} className="text-sm font-bold text-blue-600 hover:underline">← Back</button>}</div>
+              <div className="flex gap-4 mb-8 bg-slate-50 p-4 rounded-xl border border-slate-100"><input type="date" value={bookingDate || todayDateString} onChange={(e) => setBookingDate(e.target.value)} className="p-3 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-white" />{!isDoctor && !showSlots && <button onClick={checkAvailability} className="px-6 py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition-colors">Find Slots</button>}</div>
+              {isDoctor ? (
+                <div className="space-y-3">{loading ? <div className="animate-pulse bg-slate-100 h-20 rounded-xl"></div> : appointmentList.length === 0 ? <p className="text-slate-500 text-center py-10 font-medium">No appointments scheduled for this date.</p> : appointmentList.map((app, i) => (<div key={i} className="flex justify-between items-center p-5 bg-white rounded-xl border border-slate-100 shadow-sm"><div><p className="font-bold text-lg text-slate-800">{app.patientName}</p><p className="text-sm text-slate-500">{app.symptoms}</p></div><span className="px-4 py-2 bg-indigo-50 text-indigo-700 font-bold rounded-lg border border-indigo-100 tracking-wide">{app.timeSlot}</span></div>))}</div>
+              ) : (
+                <div className="max-w-3xl">
+                  <form className="grid grid-cols-2 gap-6 mb-8">
+                    <div><label className="block text-xs font-bold text-slate-400 uppercase mb-2">{t('full_name')}</label><input type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500" /></div>
+                    <div><label className="block text-xs font-bold text-slate-400 uppercase mb-2">{t('email_presc')}</label><input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500" /></div>
+                    <div className="col-span-2"><label className="block text-xs font-bold text-slate-400 uppercase mb-2">{t('phone_queue')}</label><input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500" /></div>
+                    <div className="col-span-2"><label className="block text-xs font-bold text-slate-400 uppercase mb-2">{t('symptoms_desc')}</label><textarea name="symptoms" value={formData.symptoms} onChange={handleInputChange} rows={3} className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500" /></div>
+                  </form>
+                  {showSlots && (
+                    <div className="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                      <h4 className="font-bold text-slate-800 mb-4">Available Slots</h4>
+                      <div className="grid grid-cols-4 gap-3 mb-6">
+                        {allTimeSlots.map((slot) => { const isDisabled = bookedTimeSlots.includes(slot) || isSlotInPast(slot, bookingDate); return <button key={slot} type="button" disabled={isDisabled} onClick={() => setSelectedTimeSlot(slot)} className={`py-3 rounded-lg font-bold text-sm transition-all ${isDisabled ? 'bg-slate-200 text-slate-400 cursor-not-allowed line-through' : selectedTimeSlot === slot ? 'bg-blue-600 text-white shadow-md transform scale-105' : 'bg-white text-blue-600 border border-blue-200 hover:border-blue-400'}`}>{slot}</button>})}
+                      </div>
+                      {selectedTimeSlot && <button onClick={confirmBooking} disabled={loading} className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg rounded-xl shadow-md transition-colors">Confirm Booking for {selectedTimeSlot}</button>}
                     </div>
                   )}
                 </div>
-                
-                {isDoctor && viewMode === "Live" && (
-                  <button onClick={() => startTreatment(patient)} className="px-6 py-2 bg-green-100 hover:bg-green-200 text-green-800 font-bold rounded-md shadow-sm mt-3 md:mt-0">
-                    Treat Patient
-                  </button>
-                )}
-              </li>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* ========================================== */}
-      {/* UI: THE NEW SPLIT-SCREEN TREATMENT MODAL */}
-      {/* ========================================== */}
-      {treatingPatient && (
-        <div className="print:hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
-            
-            {/* Modal Header */}
-            <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
-              <div>
-                <h3 className="text-2xl font-black text-blue-900 flex items-center gap-2">
-                  <span className="text-3xl">🧑‍⚕️</span> Treating: {treatingPatient.patientName}
-                </h3>
-                <p className="text-sm font-semibold text-red-600 mt-1 uppercase tracking-wide">Current Issue: {treatingPatient.symptoms}</p>
-              </div>
-              <button onClick={() => setTreatingPatient(null)} className="text-slate-400 hover:text-red-500 text-3xl font-bold leading-none">&times;</button>
+              )}
             </div>
-            
-            {/* Modal Body (Split Screen) */}
-            <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
-              
-              {/* LEFT COLUMN: EMR TIMELINE */}
-              <div className="w-full md:w-1/3 bg-slate-50 border-r border-slate-200 p-6 overflow-y-auto">
-                <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Patient EMR History</h4>
+          )}
+
+          {!isDoctor && activeTab === "Walk-in" && (
+            <div className="p-10 max-w-2xl mx-auto mt-4 bg-white rounded-2xl shadow-sm border border-slate-200">
+              <div className="flex justify-between items-start mb-10 border-b border-slate-100 pb-6"><div><h2 className="text-3xl font-black text-slate-800 mb-2">{t('walk_in_triage')}</h2><p className="text-slate-500 font-medium flex items-center gap-2"><Building2 size={16}/> {t('checked_into')} <strong className="text-blue-600">{activeHospitalName}</strong></p></div><button onClick={() => setActiveTab("City View")} className="text-sm font-bold text-slate-400 hover:text-blue-600 transition-colors">{t('change_hospital')}</button></div>
+              <form onSubmit={addPatient} className="space-y-5">
+                <input type="text" name="name" required value={formData.name} onChange={handleInputChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder={t('full_name')} />
+                <div className="grid grid-cols-2 gap-4">
+                  <input type="email" name="email" required value={formData.email} onChange={handleInputChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder={t('email_presc')} />
+                  <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder={t('phone_queue')} />
+                </div>
+                <textarea name="symptoms" required value={formData.symptoms} onChange={handleInputChange} rows={3} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder={t('symptoms_desc')} />
+                <button type="submit" disabled={loading} className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all">{loading ? t('processing') : t('submit_ticket')}</button>
+              </form>
+            </div>
+          )}
+
+          {!isDoctor && activeTab === "My Ticket" && myTicket && (
+            <div className="p-10 md:p-20 text-center flex flex-col items-center justify-center min-h-[60vh]">
+              <div className="bg-slate-50 border border-slate-200 rounded-3xl p-10 shadow-sm max-w-xl w-full relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+                <h3 className="text-3xl font-black text-slate-800 mb-2 mt-4">{t('digital_ticket')}</h3>
+                <p className="text-blue-600 font-bold uppercase tracking-widest text-sm mb-2">{activeHospitalName}</p>
+                <p className="text-slate-500 font-medium uppercase tracking-widest text-xs mb-10">{t('routed_to')} {myTicket.department}</p>
                 
-                {loadingHistory ? (
-                  <div className="animate-pulse space-y-4">
-                    <div className="h-4 bg-slate-200 rounded w-3/4"></div>
-                    <div className="h-4 bg-slate-200 rounded w-1/2"></div>
-                  </div>
-                ) : patientTimeline.length === 0 ? (
-                  <div className="text-center p-4 bg-white rounded border border-slate-200 border-dashed">
-                    <p className="text-sm text-slate-500 font-medium">No previous visits found.</p>
+                {myQueuePosition > 0 ? (
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100"><p className="text-sm text-slate-400 font-bold uppercase tracking-widest mb-3">{t('position')}</p><p className="text-6xl font-black text-slate-800">#{myQueuePosition}</p></div>
+                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden"><div className="absolute top-0 left-0 w-full h-1 bg-blue-500 animate-pulse"></div><p className="text-sm text-slate-400 font-bold uppercase tracking-widest mb-3">{t('est_wait')}</p><p className="text-6xl font-black text-blue-600">{estimatedWait}<span className="text-xl text-slate-400 ml-1">{t('min')}</span></p></div>
                   </div>
                 ) : (
-                  <div className="border-l-2 border-indigo-200 ml-3 pl-6 space-y-6 relative">
-                    {patientTimeline.map((visit, idx) => (
-                      <div key={idx} className="relative">
-                        {/* Timeline Dot */}
-                        <div className="absolute -left-[31px] top-1 w-4 h-4 bg-indigo-500 border-4 border-slate-50 rounded-full shadow-sm"></div>
-                        
-                        {/* Visit Card */}
-                        <div className="bg-white p-3 rounded shadow-sm border border-slate-200">
-                           <p className="text-xs font-bold text-indigo-600 mb-1 flex justify-between">
-                             {new Date(visit.calledAt).toLocaleDateString()}
-                             <span className="bg-slate-100 text-slate-600 px-2 rounded-full">{visit.department}</span>
-                           </p>
-                           <p className="text-sm font-semibold text-slate-800">{visit.symptoms}</p>
-                           
-                           {visit.diagnosis && visit.diagnosis !== "None" && (
-                             <div className="mt-2 pt-2 border-t border-slate-100">
-                               <p className="text-xs text-slate-500 font-bold uppercase">Diagnosis</p>
-                               <p className="text-sm text-slate-700">{visit.diagnosis}</p>
-                             </div>
-                           )}
+                  <div className="bg-white p-10 rounded-2xl border border-emerald-200 shadow-sm">
+                    {!ratingSubmitted ? (
+                      <>
+                        <h4 className="text-2xl font-black text-slate-800 mb-2">{t('visit_complete')}</h4>
+                        <p className="text-slate-500 font-medium mb-8">{t('feedback_prompt')}</p>
+                        <div className="flex justify-center gap-2 mb-8">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <button key={star} onClick={() => submitRating(star)} onMouseEnter={() => setHoverRating(star)} onMouseLeave={() => setHoverRating(0)} className="transition-transform hover:scale-110 focus:outline-none"><Star size={40} className={`${star <= hoverRating ? 'fill-yellow-400 text-yellow-400' : 'text-slate-200'}`} /></button>
+                          ))}
                         </div>
-                      </div>
-                    ))}
+                      </>
+                    ) : (
+                      <div className="mb-8"><div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4"><Activity size={32}/></div><h4 className="text-2xl font-black text-emerald-700">{t('feedback_saved')}</h4></div>
+                    )}
+                    <button onClick={() => { setMyTicket(null); setActiveTab("City View"); }} className="w-full py-4 bg-slate-900 text-white font-bold rounded-xl shadow-md hover:bg-black transition-colors">{t('return_home')}</button>
                   </div>
                 )}
               </div>
+            </div>
+          )}
+        </main>
+      </div>
 
-              {/* RIGHT COLUMN: DOCTOR PRESCRIPTION FORM */}
-              <div className="w-full md:w-2/3 p-6 overflow-y-auto bg-white">
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">Doctor's Diagnosis</label>
-                    <textarea rows={4} value={prescriptionData.diagnosis} onChange={(e) => setPrescriptionData({...prescriptionData, diagnosis: e.target.value})} className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 bg-blue-50/30" placeholder="Enter clinical diagnosis and notes here..." />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide flex justify-between items-end">
-                      Prescribe Medicines
-                      <button type="button" onClick={addMedicineRow} className="text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-1 rounded transition-colors">+ Add Row</button>
-                    </label>
-                    <div className="space-y-3">
-                      {prescriptionData.medicines.map((med, index) => (
-                        <div key={index} className="flex gap-2 items-center">
-                          <input type="text" placeholder="Medicine Name" value={med.name} onChange={(e) => handleMedicineChange(index, "name", e.target.value)} className="flex-1 p-2 border border-slate-300 rounded outline-none shadow-sm" />
-                          <input type="text" placeholder="Dosage (1-0-1)" value={med.dosage} onChange={(e) => handleMedicineChange(index, "dosage", e.target.value)} className="w-32 p-2 border border-slate-300 rounded outline-none shadow-sm" />
-                          <input type="text" placeholder="Days" value={med.duration} onChange={(e) => handleMedicineChange(index, "duration", e.target.value)} className="w-24 p-2 border border-slate-300 rounded outline-none shadow-sm" />
-                        </div>
+      {treatingPatient && (
+         <div className="print:hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex justify-center items-center z-50 p-6">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl h-[85vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+              <div className="px-8 py-6 border-b border-slate-100 bg-white flex justify-between items-center shrink-0">
+                <div><h3 className="text-2xl font-black text-slate-800">Consultation: {treatingPatient.patientName}</h3><p className="text-sm font-bold text-red-500 uppercase tracking-wider mt-1">Issue: {treatingPatient.symptoms}</p></div>
+                <button onClick={() => setTreatingPatient(null)} className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400 hover:text-slate-600"><X size={24} /></button>
+              </div>
+              <div className="flex flex-col md:flex-row flex-1 overflow-hidden bg-slate-50">
+                <div className="w-full md:w-1/3 border-r border-slate-200 p-8 overflow-y-auto bg-slate-50/50">
+                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2"><FolderClock size={16}/> Medical History</h4>
+                  {loadingHistory ? (<div className="space-y-6"><div className="h-20 bg-slate-200 animate-pulse rounded-xl"></div></div>) : patientTimeline.length === 0 ? (<div className="text-center p-8 bg-white rounded-xl border border-dashed border-slate-300"><p className="text-sm text-slate-500 font-medium">No prior records found.</p></div>) : (
+                    <div className="border-l-2 border-slate-200 ml-4 pl-6 space-y-8 relative">
+                      {patientTimeline.map((visit, idx) => (
+                        <div key={idx} className="relative"><div className="absolute -left-[33px] top-1 w-4 h-4 bg-white border-4 border-blue-500 rounded-full"></div><div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100"><p className="text-xs font-bold text-slate-400 mb-2 flex justify-between">{new Date(visit.calledAt).toLocaleDateString()}<span className="bg-slate-100 px-2 py-0.5 rounded text-slate-500">{visit.department}</span></p><p className="text-sm font-bold text-slate-800 mb-2">{visit.symptoms}</p>{visit.diagnosis && visit.diagnosis !== "None" && (<div className="mt-3 pt-3 border-t border-slate-50"><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Diagnosis</p><p className="text-sm text-slate-600">{visit.diagnosis}</p></div>)}</div></div>
                       ))}
+                    </div>
+                  )}
+                </div>
+                <div className="w-full md:w-2/3 p-8 overflow-y-auto bg-white">
+                  <div className="space-y-8 max-w-2xl">
+                    <div><label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Clinical Diagnosis</label><textarea rows={4} value={prescriptionData.diagnosis} onChange={(e) => setPrescriptionData({...prescriptionData, diagnosis: e.target.value})} className="w-full p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 bg-slate-50" placeholder="Enter findings and notes..." /></div>
+                    <div>
+                      <div className="flex justify-between items-end mb-3"><label className="block text-xs font-black text-slate-400 uppercase tracking-widest">Prescriptions</label><button type="button" onClick={addMedicineRow} className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1"><PlusCircle size={14}/> Add Medicine</button></div>
+                      <div className="space-y-3">
+                        {prescriptionData.medicines.map((med, index) => (
+                          <div key={index} className="flex gap-3"><input type="text" placeholder="Medicine Name" value={med.name} onChange={(e) => handleMedicineChange(index, "name", e.target.value)} className="flex-1 p-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500" /><input type="text" placeholder="Dosage (1-0-1)" value={med.dosage} onChange={(e) => handleMedicineChange(index, "dosage", e.target.value)} className="w-32 p-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500" /><input type="text" placeholder="Days" value={med.duration} onChange={(e) => handleMedicineChange(index, "duration", e.target.value)} className="w-24 p-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500" /></div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-
+              <div className="p-6 border-t border-slate-100 bg-white flex justify-end gap-4 shrink-0">
+                <button onClick={() => setTreatingPatient(null)} className="px-6 py-3 text-slate-500 font-bold hover:bg-slate-50 rounded-xl transition-colors">Cancel</button>
+                <button onClick={finishTreatment} className="px-8 py-3 bg-slate-900 hover:bg-black text-white font-bold rounded-xl shadow-md flex items-center gap-2 transition-transform active:scale-95"><Printer size={18}/> Save to EMR & Print</button>
+              </div>
             </div>
-
-            {/* Modal Footer */}
-            <div className="p-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-3 shrink-0">
-              <button onClick={() => setTreatingPatient(null)} className="px-6 py-2 text-slate-600 font-bold hover:bg-slate-200 rounded transition-colors">Cancel</button>
-              <button onClick={finishTreatment} className="px-8 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded shadow-md flex items-center gap-2 transition-transform active:scale-95">
-                🖨️ Save to EMR & Email PDF
-              </button>
-            </div>
-
           </div>
-        </div>
       )}
-
-      {/* ========================================== */}
-      {/* UI: THE PDF TEMPLATE (Only visible during Print!) */}
-      {/* ========================================== */}
       {treatingPatient && (
-        <div className="hidden print:block absolute top-0 left-0 w-full h-full bg-white p-10 text-black">
-          <div className="border-b-4 border-blue-900 pb-6 mb-8 flex justify-between items-end">
-            <div>
-              <h1 className="text-4xl font-black text-blue-900 tracking-tight">Smart OPD Hospital</h1>
-              <p className="text-lg text-slate-600 font-medium">{treatingPatient.department} Department</p>
-            </div>
-            <div className="text-right">
-              <p className="font-bold text-lg">Dr. Attending Physician</p>
-              <p className="text-slate-500 text-sm">Date: {new Date().toLocaleDateString()}</p>
-            </div>
-          </div>
-
-          <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-8 flex justify-between">
-            <div>
-              <p className="text-sm text-slate-500 font-bold uppercase tracking-wider mb-1">Patient Name</p>
-              <p className="text-2xl font-bold text-slate-800">{treatingPatient.patientName}</p>
-            </div>
-            <div className="text-right">
-               <p className="text-sm text-slate-500 font-bold uppercase tracking-wider mb-1">Reported Symptoms</p>
-               <p className="font-medium text-slate-800">{treatingPatient.symptoms}</p>
-            </div>
-          </div>
-
-          <div className="mb-10">
-            <h3 className="text-xl font-bold text-blue-900 mb-3 uppercase tracking-wider border-b pb-2">Clinical Diagnosis</h3>
-            <p className="text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">{prescriptionData.diagnosis || "No diagnosis recorded."}</p>
-          </div>
-
-          <div>
-            <h3 className="text-xl font-bold text-blue-900 mb-4 uppercase tracking-wider border-b pb-2">Rx: Medicines Prescribed</h3>
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-100 text-slate-600">
-                  <th className="p-3 border border-slate-300">Medicine Name</th>
-                  <th className="p-3 border border-slate-300 w-32">Dosage</th>
-                  <th className="p-3 border border-slate-300 w-32">Duration</th>
-                </tr>
-              </thead>
-              <tbody>
-                {prescriptionData.medicines.filter(m => m.name !== "").map((med, idx) => (
-                  <tr key={idx} className="text-slate-800 font-medium">
-                    <td className="p-3 border border-slate-300 text-lg">{med.name}</td>
-                    <td className="p-3 border border-slate-300">{med.dosage}</td>
-                    <td className="p-3 border border-slate-300">{med.duration}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="hidden print:block absolute top-0 left-0 w-full bg-white p-10 text-black">
+          <div className="border-b-4 border-slate-900 pb-6 mb-8 flex justify-between items-end"><div><h1 className="text-4xl font-black text-slate-900 tracking-tight">{activeHospitalName}</h1><p className="text-lg text-slate-500 font-medium">{treatingPatient.department} Department</p></div><div className="text-right"><p className="font-bold text-lg">Dr. Attending Physician</p><p className="text-slate-500 text-sm">Date: {new Date().toLocaleDateString()}</p></div></div>
+          <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-8 flex justify-between"><div><p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Patient Name</p><p className="text-2xl font-black text-slate-800">{treatingPatient.patientName}</p></div><div className="text-right"><p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Reported Symptoms</p><p className="font-bold text-slate-800">{treatingPatient.symptoms}</p></div></div>
+          <div className="mb-10"><h3 className="text-lg font-black text-slate-900 mb-3 uppercase tracking-wider border-b pb-2">Clinical Diagnosis</h3><p className="text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">{prescriptionData.diagnosis || "No diagnosis recorded."}</p></div>
+          <div><h3 className="text-lg font-black text-slate-900 mb-4 uppercase tracking-wider border-b pb-2">Rx: Medicines Prescribed</h3><table className="w-full text-left border-collapse"><thead><tr className="bg-slate-100 text-slate-600"><th className="p-3 border border-slate-300">Medicine Name</th><th className="p-3 border border-slate-300 w-32">Dosage</th><th className="p-3 border border-slate-300 w-32">Duration</th></tr></thead><tbody>{prescriptionData.medicines.filter(m => m.name !== "").map((med, idx) => (<tr key={idx} className="text-slate-800 font-bold"><td className="p-3 border border-slate-300 text-lg">{med.name}</td><td className="p-3 border border-slate-300">{med.dosage}</td><td className="p-3 border border-slate-300">{med.duration}</td></tr>))}</tbody></table></div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center bg-slate-100 p-6 print:p-0 print:bg-white">
-      <div className="mb-8 mt-6 text-center print:hidden">
-        <h1 className="text-5xl font-black text-blue-900 mb-2 tracking-tight">Smart OPD</h1>
-        <p className="text-slate-600 font-medium">AI-Powered Hospital Triage & Scheduling</p>
-      </div>
-      <Authenticator formFields={formFields}>
-        {({ signOut }) => <DashboardApp signOut={signOut} />}
-      </Authenticator>
-    </main>
-  );
+  return <Authenticator formFields={formFields}>{({ signOut }) => <DashboardApp signOut={signOut} />}</Authenticator>;
 }
