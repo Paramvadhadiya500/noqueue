@@ -16,20 +16,42 @@ Amplify.configure({ Auth: { Cognito: { userPoolId: 'ap-south-1_p039t5AGU', userP
 const formFields = { signUp: { name: { order: 1, label: 'Full Name', placeholder: 'Enter your full name', isRequired: true }, username: { order: 2 }, password: { order: 3 }, confirm_password: { order: 4 } } };
 const allTimeSlots = ["09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM", "04:30 PM"];
 
+// ==========================================
+// NEW: GPS COORDINATES ADDED TO HOSPITALS
+// ==========================================
 const NETWORK_HOSPITALS = [
-  { id: "HOSP-ABC", name: "City Central Hospital", location: "Downtown", color: "blue" },
-  { id: "HOSP-XYZ", name: "Westside Clinic", location: "West District", color: "indigo" },
-  { id: "HOSP-LMN", name: "Northpoint General", location: "North Hills", color: "emerald" }
+  { id: "HOSP-ABC", name: "City Central Hospital", location: "Downtown", color: "blue", lat: 22.6063779544277, lng: 72.82086663502362 }, // Ahmedabad coordinates
+  { id: "HOSP-XYZ", name: "Westside Clinic", location: "West District", color: "indigo", lat: 23.0338, lng: 72.5850 },
+  { id: "HOSP-LMN", name: "Northpoint General", location: "North Hills", color: "emerald", lat: 23.0600, lng: 72.5800 }
 ];
 
 const TRANSLATIONS = {
-  en: { city_wide_network: "City-Wide Network", find_a_hospital: "Find a Hospital", select_location: "Select a location to see wait times.", walk_in: "Walk-in", schedule: "Schedule", live_queue: "Live Queue", waiting: "waiting", est_wait: "Est. Wait", min: "min", walk_in_triage: "Walk-in Triage", checked_into: "Checked into:", change_hospital: "Change Hospital", full_name: "Full Legal Name", email_presc: "Email Address", phone_queue: "Phone (e.g. +919876543210)", symptoms_desc: "Describe your symptoms...", submit_ticket: "Submit & Get Ticket", processing: "Processing AI Triage...", digital_ticket: "Digital Queue Ticket", routed_to: "Routed to:", position: "Position", your_turn: "It's your turn!", proceed_doctor: "Please proceed to the doctor's office.", leave_queue: "Leave Queue", visit_complete: "Visit Complete", feedback_prompt: "How was your experience?", feedback_saved: "Feedback Saved!", return_home: "Return to Home", confirm_arrival: "I Have Arrived", arrival_confirmed: "Arrival Confirmed", almost_up: "You are almost up! Please confirm.", no_show_warning: "Warning: Multiple missed visits recorded. Please arrive on time.", doc_on_break: "Doctor is on a short break until", doc_emergency: "Critical Emergency: Accepting High Priority only.", delayed: "Delayed", my_followups: "My Follow-ups", follow_up_req: "Follow-up Requested", book_followup: "Book Follow-up", no_followup: "No pending follow-ups found for this email.", check_records: "Check Health Records", upload_doc: "Upload Report (PDF/Image)", uploading: "Uploading..." },
-  hi: { city_wide_network: "शहर-व्यापी नेटवर्क", find_a_hospital: "अस्पताल खोजें", select_location: "अस्पताल चुनें।", walk_in: "वॉक-इन", schedule: "शेड्यूल", live_queue: "लाइव कतार", waiting: "प्रतीक्षा में", est_wait: "अनुमानित समय", min: "मिनट", walk_in_triage: "वॉक-इन ट्राइएज", checked_into: "अस्पताल:", change_hospital: "अस्पताल बदलें", full_name: "पूरा नाम", email_presc: "ईमेल आईडी", phone_queue: "फ़ोन (उदा. +919876543210)", symptoms_desc: "लक्षणों का वर्णन करें...", submit_ticket: "टिकट लें", processing: "AI ट्राइएज चल रहा है...", digital_ticket: "डिजिटल कतार टिकट", routed_to: "विभाग:", position: "स्थान", your_turn: "अब आपकी बारी है!", proceed_doctor: "कृपया डॉक्टर के केबिन में जाएं।", leave_queue: "कतार छोड़ें", visit_complete: "परामर्श पूर्ण", feedback_prompt: "आपका अनुभव कैसा रहा?", feedback_saved: "प्रतिक्रिया सहेजी गई!", return_home: "होम पर लौटें", confirm_arrival: "मैं पहुँच गया हूँ", arrival_confirmed: "आगमन की पुष्टि", almost_up: "आपकी बारी आने वाली है! पुष्टि करें।", no_show_warning: "चेतावनी: पिछली मुलाकातें मिस की हैं। समय पर पहुँचें।", doc_on_break: "डॉक्टर ब्रेक पर हैं:", doc_emergency: "आपातकाल: केवल उच्च प्राथमिकता वाले मरीज।", delayed: "विलंबित", my_followups: "मेरे फॉलो-अप", follow_up_req: "फॉलो-अप आवश्यक", book_followup: "फॉलो-अप बुक करें", no_followup: "इस ईमेल के लिए कोई लंबित फॉलो-अप नहीं मिला।", check_records: "रिकॉर्ड जांचें", upload_doc: "रिपोर्ट अपलोड करें", uploading: "अपलोड हो रहा है..." },
-  gu: { city_wide_network: "શહેર-વ્યાપી નેટવર્ક", find_a_hospital: "હોસ્પિટલ શોધો", select_location: "હોસ્પિટલ પસંદ કરો.", walk_in: "વૉક-ઇન", schedule: "શેડ્યૂલ", live_queue: "લાઇવ કતાર", waiting: "પ્રતીક્ષામાં", est_wait: "અંદાજિત સમય", min: "મિનિટ", walk_in_triage: "વૉક-ઇન ટ્રાયજ", checked_into: "હોસ્પિટલ:", change_hospital: "હોસ્પિટલ બદલો", full_name: "પૂરું નામ", email_presc: "ઇમેઇલ આઈડી", phone_queue: "ફોન (દા.ત. +919876543210)", symptoms_desc: "લક્ષણોનું વર્ણન કરો...", submit_ticket: "ટિકિટ મેળવો", processing: "AI ટ્રાયજ ચાલી રહ્યું છે...", digital_ticket: "ડિજિટલ કતાર ટિકિટ", routed_to: "વિભાગ:", position: "સ્થાન", your_turn: "હવે તમારો વારો છે!", proceed_doctor: "કૃપા કરીને ડૉક્ટરની કેબિનમાં જાઓ.", leave_queue: "કતાર છોડો", visit_complete: "મુલાકાત પૂર્ણ", feedback_prompt: "તમારો અનુભવ કેવો રહ્યો?", feedback_saved: "પ્રતિસાદ સાચવ્યો!", return_home: "હોમ પર પાછા ફરો", confirm_arrival: "હું પહોંચી ગયો છું", arrival_confirmed: "આગમન કન્ફર્મ થયું", almost_up: "તમારો વારો આવવાનો છે! પુષ્ટિ કરો.", no_show_warning: "ચેતવણી: અગાઉની મુલાકાતો ચૂકી ગયા છો. સમયસર પહોંચો.", doc_on_break: "ડૉક્ટર બ્રેક પર છે:", doc_emergency: "ઇમરજન્સી: ફક્ત ઉચ્ચ પ્રાધાન્યતાવાળા દર્દીઓ.", delayed: "વિલંબિત", my_followups: "મારા ફોલો-અપ", follow_up_req: "ફોલો-અપ જરૂરી", book_followup: "ફોલો-અપ બુક કરો", no_followup: "આ ઇમેઇલ માટે કોઈ બાકી ફોલો-અપ મળ્યું નથી.", check_records: "રેકોર્ડ્સ તપાસો", upload_doc: "રિપોર્ટ અપલોડ કરો", uploading: "અપલોડ થઈ રહ્યું છે..." }
+  en: { city_wide_network: "City-Wide Network", find_a_hospital: "Find a Hospital", select_location: "Select a location to see wait times.", walk_in: "Walk-in", schedule: "Schedule", live_queue: "Live Queue", waiting: "waiting", est_wait: "Est. Wait", min: "min", walk_in_triage: "Walk-in Triage", checked_into: "Checked into:", change_hospital: "Change Hospital", full_name: "Full Legal Name", email_presc: "Email Address", phone_queue: "Phone (e.g. +919876543210)", symptoms_desc: "Describe your symptoms...", submit_ticket: "Submit & Get Ticket", processing: "Processing AI Triage...", digital_ticket: "Digital Queue Ticket", routed_to: "Routed to:", position: "Position", your_turn: "It's your turn!", proceed_doctor: "Please proceed to the doctor's office.", leave_queue: "Leave Queue", visit_complete: "Visit Complete", feedback_prompt: "How was your experience?", feedback_saved: "Feedback Saved!", return_home: "Return to Home", confirm_arrival: "I Have Arrived", arrival_confirmed: "Arrival Confirmed", almost_up: "You are almost up! Please confirm.", no_show_warning: "Warning: Multiple missed visits recorded. Please arrive on time.", doc_on_break: "Doctor is on a short break until", doc_emergency: "Critical Emergency: Accepting High Priority only.", delayed: "Delayed", my_followups: "My Follow-ups", follow_up_req: "Follow-up Requested", book_followup: "Book Follow-up", no_followup: "No pending follow-ups found for this email.", check_records: "Check Health Records", upload_doc: "Upload Report (PDF/Image)", uploading: "Uploading...", 
+    gps_verifying: "Verifying GPS...", gps_error: "GPS Denied or Unavailable.", too_far: "You are too far from the hospital to check in. Please arrive within 500 meters." 
+  },
+  hi: { city_wide_network: "शहर-व्यापी नेटवर्क", find_a_hospital: "अस्पताल खोजें", select_location: "अस्पताल चुनें।", walk_in: "वॉक-इन", schedule: "शेड्यूल", live_queue: "लाइव कतार", waiting: "प्रतीक्षा में", est_wait: "अनुमानित समय", min: "मिनट", walk_in_triage: "वॉक-इन ट्राइएज", checked_into: "अस्पताल:", change_hospital: "अस्पताल बदलें", full_name: "पूरा नाम", email_presc: "ईमेल आईडी", phone_queue: "फ़ोन (उदा. +919876543210)", symptoms_desc: "लक्षणों का वर्णन करें...", submit_ticket: "टिकट लें", processing: "AI ट्राइएज चल रहा है...", digital_ticket: "डिजिटल कतार टिकट", routed_to: "विभाग:", position: "स्थान", your_turn: "अब आपकी बारी है!", proceed_doctor: "कृपया डॉक्टर के केबिन में जाएं।", leave_queue: "कतार छोड़ें", visit_complete: "परामर्श पूर्ण", feedback_prompt: "आपका अनुभव कैसा रहा?", feedback_saved: "प्रतिक्रिया सहेजी गई!", return_home: "होम पर लौटें", confirm_arrival: "मैं पहुँच गया हूँ", arrival_confirmed: "आगमन की पुष्टि", almost_up: "आपकी बारी आने वाली है! पुष्टि करें।", no_show_warning: "चेतावनी: पिछली मुलाकातें मिस की हैं। समय पर पहुँचें।", doc_on_break: "डॉक्टर ब्रेक पर हैं:", doc_emergency: "आपातकाल: केवल उच्च प्राथमिकता वाले मरीज।", delayed: "विलंबित", my_followups: "मेरे फॉलो-अप", follow_up_req: "फॉलो-अप आवश्यक", book_followup: "फॉलो-अप बुक करें", no_followup: "इस ईमेल के लिए कोई लंबित फॉलो-अप नहीं मिला।", check_records: "रिकॉर्ड जांचें", upload_doc: "रिपोर्ट अपलोड करें", uploading: "अपलोड हो रहा है...",
+    gps_verifying: "GPS सत्यापित हो रहा है...", gps_error: "GPS उपलब्ध नहीं है।", too_far: "आप अस्पताल से बहुत दूर हैं। कृपया 500 मीटर के दायरे में आएं।"
+  },
+  gu: { city_wide_network: "શહેર-વ્યાપી નેટવર્ક", find_a_hospital: "હોસ્પિટલ શોધો", select_location: "હોસ્પિટલ પસંદ કરો.", walk_in: "વૉક-ઇન", schedule: "શેડ્યૂલ", live_queue: "લાઇવ કતાર", waiting: "પ્રતીક્ષામાં", est_wait: "અંદાજિત સમય", min: "મિનિટ", walk_in_triage: "વૉક-ઇન ટ્રાયજ", checked_into: "હોસ્પિટલ:", change_hospital: "હોસ્પિટલ બદલો", full_name: "પૂરું નામ", email_presc: "ઇમેઇલ આઈડી", phone_queue: "ફોન (દા.ત. +919876543210)", symptoms_desc: "લક્ષણોનું વર્ણન કરો...", submit_ticket: "ટિકિટ મેળવો", processing: "AI ટ્રાયજ ચાલી રહ્યું છે...", digital_ticket: "ડિજિટલ કતાર ટિકિટ", routed_to: "વિભાગ:", position: "સ્થાન", your_turn: "હવે તમારો વારો છે!", proceed_doctor: "કૃપા કરીને ડૉક્ટરની કેબિનમાં જાઓ.", leave_queue: "કતાર છોડો", visit_complete: "મુલાકાત પૂર્ણ", feedback_prompt: "તમારો અનુભવ કેવો રહ્યો?", feedback_saved: "પ્રતિસાદ સાચવ્યો!", return_home: "હોમ પર પાછા ફરો", confirm_arrival: "હું પહોંચી ગયો છું", arrival_confirmed: "આગમન કન્ફર્મ થયું", almost_up: "તમારો વારો આવવાનો છે! પુષ્ટિ કરો.", no_show_warning: "ચેતવણી: અગાઉની મુલાકાતો ચૂકી ગયા છો. સમયસર પહોંચો.", doc_on_break: "ડૉક્ટર બ્રેક પર છે:", doc_emergency: "ઇમરજન્સી: ફક્ત ઉચ્ચ પ્રાધાન્યતાવાળા દર્દીઓ.", delayed: "વિલંબિત", my_followups: "મારા ફોલો-અપ", follow_up_req: "ફોલો-અપ જરૂરી", book_followup: "ફોલો-અપ બુક કરો", no_followup: "આ ઇમેઇલ માટે કોઈ બાકી ફોલો-અપ મળ્યું નથી.", check_records: "રેકોર્ડ્સ તપાસો", upload_doc: "રિપોર્ટ અપલોડ કરો", uploading: "અપલોડ થઈ રહ્યું છે...",
+    gps_verifying: "GPS ચકાસી રહ્યું છે...", gps_error: "GPS અક્ષમ છે.", too_far: "તમે ચેક-ઇન કરવા માટે ખૂબ દૂર છો. કૃપા કરીને 500 મીટરની અંદર આવો."
+  }
 };
 
 const getTodayDateString = () => { const now = new Date(); const offset = now.getTimezoneOffset(); return new Date(now.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0]; };
 const isSlotInPast = (slotTimeStr: string, selectedDateStr: string) => { const todayStr = getTodayDateString(); if (selectedDateStr < todayStr) return true; if (selectedDateStr > todayStr) return false; const now = new Date(); const [time, modifier] = slotTimeStr.split(' '); let [hours, minutes] = time.split(':'); let parsedHours = parseInt(hours, 10); if (parsedHours === 12 && modifier === 'AM') parsedHours = 0; if (parsedHours < 12 && modifier === 'PM') parsedHours += 12; const slotTime = new Date(); slotTime.setHours(parsedHours, parseInt(minutes, 10), 0, 0); return slotTime < now; };
+
+// ==========================================
+// NEW: THE HAVERSINE FORMULA (Distance in meters)
+// ==========================================
+const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const R = 6371e3; // Earth radius in meters
+  const toRad = (val: number) => val * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; 
+};
 
 export default function Home() { 
   return (
@@ -81,6 +103,7 @@ function DashboardApp({ signOut }: { signOut: any }) {
 
   const [hospitalFee, setHospitalFee] = useState(500);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [verifyingGPS, setVerifyingGPS] = useState(false); // NEW: GPS Loading State
 
   const todayDateString = getTodayDateString();
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => { 
@@ -192,18 +215,11 @@ function DashboardApp({ signOut }: { signOut: any }) {
 
   const handleFileUpload = async (file: File) => {
     try {
-      const res = await fetch('/api/queue', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ action: "getUploadUrl", fileName: file.name, fileType: file.type }) 
-      });
+      const res = await fetch('/api/queue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "getUploadUrl", fileName: file.name, fileType: file.type }) });
       const { uploadUrl, fileUrl } = await res.json();
       await fetch(uploadUrl, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
       return fileUrl;
-    } catch (err) { 
-      showToast("File upload failed", "error"); 
-      return ""; 
-    }
+    } catch (err) { showToast("File upload failed", "error"); return ""; }
   };
 
   const checkAvailability = async (e: React.FormEvent) => {
@@ -215,9 +231,7 @@ function DashboardApp({ signOut }: { signOut: any }) {
       const data = await res.json();
       if (!res.ok) { showToast(`Error: ${data.details || data.error}`, "error"); setLoading(false); return; }
       setBookedTimeSlots(Array.isArray(data) ? data.map((app: any) => app.timeSlot) : []); setShowSlots(true);
-    } catch (error) { 
-      showToast("Network error.", "error"); 
-    }
+    } catch (error) { showToast("Network error.", "error"); }
     setLoading(false);
   };
 
@@ -228,24 +242,12 @@ function DashboardApp({ signOut }: { signOut: any }) {
       let uploadedDocUrl = "";
       if (selectedFile) uploadedDocUrl = await handleFileUpload(selectedFile);
 
-      const res = await fetch('/api/queue', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ action: "bookAppointment", department: selectedDept, date: bookingDate, timeSlot: selectedTimeSlot, patientName: formData.name, email: formData.email, phone: formData.phone, symptoms: formData.symptoms, documentUrl: uploadedDocUrl, hospitalId: activeHospitalId }) 
-      });
+      const res = await fetch('/api/queue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "bookAppointment", department: selectedDept, date: bookingDate, timeSlot: selectedTimeSlot, patientName: formData.name, email: formData.email, phone: formData.phone, symptoms: formData.symptoms, documentUrl: uploadedDocUrl, hospitalId: activeHospitalId }) });
       const responseData = await res.json();
       
-      if (!res.ok) { 
-        showToast(`Booking Failed: ${responseData.details}`, "error"); 
-        checkAvailability({ preventDefault: () => {} } as React.FormEvent); 
-      } else { 
-        showToast("✅ Appointment Booked!"); 
-        setFormData({ name: '', email: '', phone: '', age: '', address: '', symptoms: '', isEmergency: false }); 
-        setSelectedFile(null); setSelectedTimeSlot(""); setShowSlots(false); setBookingDate(""); setActiveTab("City View"); 
-      }
-    } catch (error) { 
-      showToast("Error booking appointment.", "error"); 
-    }
+      if (!res.ok) { showToast(`Booking Failed: ${responseData.details}`, "error"); checkAvailability({ preventDefault: () => {} } as React.FormEvent); } 
+      else { showToast("✅ Appointment Booked!"); setFormData({ name: '', email: '', phone: '', age: '', address: '', symptoms: '', isEmergency: false }); setSelectedFile(null); setSelectedTimeSlot(""); setShowSlots(false); setBookingDate(""); setActiveTab("City View"); }
+    } catch (error) { showToast("Error booking appointment.", "error"); }
     setLoading(false);
   };
 
@@ -275,11 +277,7 @@ function DashboardApp({ signOut }: { signOut: any }) {
       let uploadedDocUrl = "";
       if (selectedFile) uploadedDocUrl = await handleFileUpload(selectedFile);
 
-      const res = await fetch('/api/queue', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({...formData, documentUrl: uploadedDocUrl, hospitalId: activeHospitalId }) 
-      });
+      const res = await fetch('/api/queue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({...formData, documentUrl: uploadedDocUrl, hospitalId: activeHospitalId }) });
       const responseData = await res.json();
       if (!res.ok) { setLoading(false); return showToast(responseData.details || responseData.error, "error"); }
       
@@ -293,46 +291,62 @@ function DashboardApp({ signOut }: { signOut: any }) {
       if (responseData.department) setSelectedDept(responseData.department);
       setActiveTab("My Ticket"); 
       showToast("Triage complete! You are in the queue.");
-    } catch (error) { 
-      showToast("Error submitting triage.", "error"); 
-    }
+    } catch (error) { showToast("Error submitting triage.", "error"); }
     setLoading(false);
   };
 
   const submitRating = async (stars: number) => {
     if (!myTicket) return; 
     setRatingSubmitted(true);
-    try { 
-      await fetch('/api/queue', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ action: "submitRating", Timestamp: myTicket.Timestamp, rating: stars }) 
-      }); 
-      showToast(t('feedback_saved')); 
-    } catch (error) { console.error("Rating failed", error); }
+    try { await fetch('/api/queue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "submitRating", Timestamp: myTicket.Timestamp, rating: stars }) }); showToast(t('feedback_saved')); } 
+    catch (error) { console.error("Rating failed", error); }
   };
 
+  // ==========================================
+  // NEW: GPS SECURED CHECK-IN
+  // ==========================================
   const markArrived = async () => {
     if (!myTicket) return;
-    try { 
-      await fetch('/api/queue', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ action: "markArrived", department: myTicket.department, Timestamp: myTicket.Timestamp }) 
-      }); 
-      setMyTicket({...myTicket, arrivalStatus: "Arrived"}); 
-      showToast(t('arrival_confirmed')); 
-    } catch (error) { showToast("Error confirming arrival", "error"); }
+    setVerifyingGPS(true);
+
+    if (!navigator.geolocation) {
+       setVerifyingGPS(false);
+       return showToast(t('gps_error'), "error");
+    }
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const userLat = position.coords.latitude;
+      const userLng = position.coords.longitude;
+      
+      const targetHospital = NETWORK_HOSPITALS.find(h => h.id === myTicket.hospitalId);
+      if (!targetHospital) return setVerifyingGPS(false);
+
+      const distanceInMeters = calculateDistance(userLat, userLng, targetHospital.lat, targetHospital.lng);
+
+      // SECURITY CHECK: Must be within 500 meters of the building!
+      if (distanceInMeters > 500) {
+         setVerifyingGPS(false);
+         return showToast(t('too_far'), "error");
+      }
+
+      // If passed, allow backend check-in
+      try { 
+        await fetch('/api/queue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "markArrived", department: myTicket.department, Timestamp: myTicket.Timestamp }) }); 
+        setMyTicket({...myTicket, arrivalStatus: "Arrived"}); 
+        showToast(t('arrival_confirmed')); 
+      } catch (error) { showToast("Error confirming arrival", "error"); }
+      setVerifyingGPS(false);
+
+    }, (error) => {
+      setVerifyingGPS(false);
+      showToast(t('gps_error'), "error");
+    });
   };
 
   const markNoShow = async (patient: any) => {
     if (!confirm(`Mark ${patient.patientName} as No-Show and remove from queue?`)) return;
     try {
-      await fetch('/api/queue', { 
-        method: 'PUT', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ ...patient, isNoShow: true }) 
-      });
+      await fetch('/api/queue', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...patient, isNoShow: true }) });
       showToast(`${patient.patientName} marked as No-Show.`, "error"); 
       fetchQueue("Live", selectedDept, false);
       fetch('/api/queue?department=Archive').then(res => res.json()).then(data => setArchiveData(data)).catch(console.error);
@@ -342,11 +356,7 @@ function DashboardApp({ signOut }: { signOut: any }) {
   const updateDoctorState = async (newStatus: string, breakMinutes: number = 0) => {
     const resumeTime = breakMinutes > 0 ? new Date(Date.now() + breakMinutes * 60000).toISOString() : null;
     try {
-      await fetch('/api/queue', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ action: "updateDoctorStatus", department: selectedDept, hospitalId: activeHospitalId, docStatus: newStatus, resumeTime: resumeTime }) 
-      });
+      await fetch('/api/queue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "updateDoctorStatus", department: selectedDept, hospitalId: activeHospitalId, docStatus: newStatus, resumeTime: resumeTime }) });
       setSystemState({ docStatus: newStatus, resumeTime: resumeTime || undefined });
       showToast(`Status updated to ${newStatus}`);
     } catch (err) { showToast("Failed to update status", "error"); }
@@ -354,11 +364,7 @@ function DashboardApp({ signOut }: { signOut: any }) {
 
   const saveHospitalConfig = async () => {
     try {
-      await fetch('/api/queue', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ action: "updateHospitalConfig", hospitalId: activeHospitalId, baseFee: hospitalFee }) 
-      });
+      await fetch('/api/queue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "updateHospitalConfig", hospitalId: activeHospitalId, baseFee: hospitalFee }) });
       showToast(`Hospital settings saved!`);
     } catch (err) { showToast("Failed to save settings", "error"); }
   };
@@ -392,11 +398,7 @@ function DashboardApp({ signOut }: { signOut: any }) {
   const handleTransfer = async () => {
     if (!treatingPatient) return;
     try {
-      await fetch('/api/queue', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ action: "transferPatient", oldDepartment: treatingPatient.department, Timestamp: treatingPatient.Timestamp, newDepartment: transferDept, transferNotes: transferNotes, patientData: treatingPatient }) 
-      });
+      await fetch('/api/queue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "transferPatient", oldDepartment: treatingPatient.department, Timestamp: treatingPatient.Timestamp, newDepartment: transferDept, transferNotes: transferNotes, patientData: treatingPatient }) });
       showToast(`Patient successfully transferred to ${transferDept}!`); 
       setTreatingPatient(null); 
       fetchQueue("Live", selectedDept, false);
@@ -737,6 +739,46 @@ function DashboardApp({ signOut }: { signOut: any }) {
             </div>
           )}
 
+          {/* PATIENT: FOLLOW UPS */}
+          {userRole === "Patient" && activeTab === "Follow-ups" && (
+            <div className="max-w-3xl mx-auto mt-6">
+              <div className="mb-10 text-center">
+                <CalendarClock className="mx-auto text-blue-600 mb-4" size={48} />
+                <h2 className="text-4xl font-black text-slate-800 mb-3 tracking-tight">{t('my_followups')}</h2>
+                <p className="text-lg text-slate-500">Enter your email to view required return visits requested by your doctor.</p>
+              </div>
+              <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-8">
+                <div className="flex gap-4">
+                  <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder={t('email_presc')} className="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
+                  <button onClick={() => fetchQueue("Archive", "Archive", false)} className="px-8 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800">{t('check_records')}</button>
+                </div>
+              </div>
+              {formData.email && (
+                <div>
+                  {myFollowUps.length === 0 ? (
+                    <div className="text-center p-10 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                      <Activity className="mx-auto text-slate-300 mb-2" size={32}/>
+                      <p className="text-slate-500 font-medium">{t('no_followup')}</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {myFollowUps.map((record, i) => (
+                        <div key={record.Timestamp || i} className="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-xl flex justify-between items-center shadow-sm">
+                          <div>
+                            <p className="text-xs font-black uppercase text-amber-600 tracking-widest mb-1">{t('follow_up_req')}</p>
+                            <h3 className="text-xl font-bold text-slate-800 mb-1">Return to {record.department} by {new Date(record.followUpDate).toLocaleDateString()}</h3>
+                            <p className="text-slate-600 text-sm">Requested by Dr. {record.assignedDoctor} • Previous Diagnosis: {record.diagnosis}</p>
+                          </div>
+                          <button onClick={() => { setActiveHospitalId(record.hospitalId); setSelectedDept(record.department); setActiveTab("Schedule"); setBookingDate(record.followUpDate); }} className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-xl shadow-md transition-colors whitespace-nowrap">{t('book_followup')}</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* DOCTOR: LIVE QUEUE / ARCHIVE */}
           {userRole === "Doctor" && (activeTab === "Dashboard" || activeTab === "Archive") && (
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -840,39 +882,6 @@ function DashboardApp({ signOut }: { signOut: any }) {
             </div>
           )}
 
-          {/* PATIENT: FOLLOW UPS */}
-          {userRole === "Patient" && activeTab === "Follow-ups" && (
-            <div className="max-w-3xl mx-auto mt-6">
-              <div className="mb-10 text-center"><CalendarClock className="mx-auto text-blue-600 mb-4" size={48} /><h2 className="text-4xl font-black text-slate-800 mb-3 tracking-tight">{t('my_followups')}</h2><p className="text-lg text-slate-500">Enter your email to view required return visits requested by your doctor.</p></div>
-              <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-8">
-                <div className="flex gap-4">
-                  <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder={t('email_presc')} className="flex-1 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" />
-                  <button onClick={() => fetchQueue("Archive", "Archive", false)} className="px-8 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800">{t('check_records')}</button>
-                </div>
-              </div>
-              {formData.email && (
-                <div>
-                  {myFollowUps.length === 0 ? (
-                    <div className="text-center p-10 bg-slate-50 rounded-2xl border border-dashed border-slate-300"><Activity className="mx-auto text-slate-300 mb-2" size={32}/><p className="text-slate-500 font-medium">{t('no_followup')}</p></div>
-                  ) : (
-                    <div className="space-y-4">
-                      {myFollowUps.map((record, i) => (
-                        <div key={i} className="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-xl flex justify-between items-center shadow-sm">
-                          <div>
-                            <p className="text-xs font-black uppercase text-amber-600 tracking-widest mb-1">{t('follow_up_req')}</p>
-                            <h3 className="text-xl font-bold text-slate-800 mb-1">Return to {record.department} by {new Date(record.followUpDate).toLocaleDateString()}</h3>
-                            <p className="text-slate-600 text-sm">Requested by Dr. {record.assignedDoctor} • Previous Diagnosis: {record.diagnosis}</p>
-                          </div>
-                          <button onClick={() => { setActiveHospitalId(record.hospitalId); setSelectedDept(record.department); setActiveTab("Schedule"); setBookingDate(record.followUpDate); }} className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-xl shadow-md transition-colors whitespace-nowrap">{t('book_followup')}</button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
           {/* PATIENT: WALK IN */}
           {userRole === "Patient" && activeTab === "Walk-in" && (
             <div className="p-10 max-w-2xl mx-auto mt-4 bg-white rounded-2xl shadow-sm border border-slate-200">
@@ -898,14 +907,14 @@ function DashboardApp({ signOut }: { signOut: any }) {
                    </div>
                 </div>
 
-                <button type="submit" disabled={loading} className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                <button type="submit" disabled={loading || verifyingGPS} className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
                   {loading ? <><Activity size={20} className="animate-spin" /> {selectedFile ? t('uploading') : t('processing')}</> : t('submit_ticket')}
                 </button>
               </form>
             </div>
           )}
 
-          {/* PATIENT: LIVE TICKET */}
+          {/* PATIENT LIVE TICKET */}
           {userRole === "Patient" && activeTab === "My Ticket" && myTicket && (
             <div className="p-10 md:p-20 text-center flex flex-col items-center justify-center min-h-[60vh]">
               {systemState.docStatus === "Break" && systemState.resumeTime && <div className="bg-orange-100 text-orange-800 border border-orange-200 p-4 rounded-xl mb-6 flex items-center justify-center gap-3 animate-in fade-in duration-500"><Clock size={20}/><p className="font-bold">{t('doc_on_break')} {new Date(systemState.resumeTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}.</p></div>}
@@ -930,7 +939,9 @@ function DashboardApp({ signOut }: { signOut: any }) {
                     {myTicket.arrivalStatus !== "Arrived" ? (
                       <div className={`p-6 rounded-2xl border ${myQueuePosition <= 5 ? 'bg-orange-50 border-orange-200 animate-pulse' : 'bg-white border-slate-200'}`}>
                         {myQueuePosition <= 5 && <p className="text-orange-700 font-bold mb-4">{t('almost_up')}</p>}
-                        <button onClick={markArrived} className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-lg rounded-xl shadow-md transition-colors flex items-center justify-center gap-2"><MapPinCheck size={24}/> {t('confirm_arrival')}</button>
+                        <button onClick={markArrived} disabled={verifyingGPS} className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-lg rounded-xl shadow-md transition-colors flex items-center justify-center gap-2">
+                          {verifyingGPS ? <><Activity className="animate-spin" size={24}/> {t('gps_verifying')}</> : <><MapPinCheck size={24}/> {t('confirm_arrival')}</>}
+                        </button>
                       </div>
                     ) : (<div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl font-bold flex items-center justify-center gap-2"><MapPinCheck size={20}/> {t('arrival_confirmed')}</div>)}
                   </>
@@ -986,7 +997,14 @@ function DashboardApp({ signOut }: { signOut: any }) {
                   ) : (
                     <div className="border-l-2 border-slate-200 ml-4 pl-6 space-y-8 relative">
                       {patientTimeline.map((visit, idx) => (
-                        <div key={visit.Timestamp || idx} className="relative"><div className="absolute -left-[33px] top-1 w-4 h-4 bg-white border-4 border-blue-500 rounded-full"></div><div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100"><p className="text-xs font-bold text-slate-400 mb-2 flex justify-between">{new Date(visit.calledAt).toLocaleDateString()}<span className="bg-slate-100 px-2 py-0.5 rounded text-slate-500">{visit.department}</span></p><p className="text-sm font-bold text-slate-800 mb-2">{visit.symptoms}</p>{visit.diagnosis && visit.diagnosis !== "None" && (<div className="mt-3 pt-3 border-t border-slate-50"><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Diagnosis</p><p className="text-sm text-slate-600">{visit.diagnosis}</p></div>)}</div></div>
+                        <div key={visit.Timestamp || idx} className="relative">
+                          <div className="absolute -left-[33px] top-1 w-4 h-4 bg-white border-4 border-blue-500 rounded-full"></div>
+                          <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                            <p className="text-xs font-bold text-slate-400 mb-2 flex justify-between">{new Date(visit.calledAt).toLocaleDateString()}<span className="bg-slate-100 px-2 py-0.5 rounded text-slate-500">{visit.department}</span></p>
+                            <p className="text-sm font-bold text-slate-800 mb-2">{visit.symptoms}</p>
+                            {visit.diagnosis && visit.diagnosis !== "None" && (<div className="mt-3 pt-3 border-t border-slate-50"><p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Diagnosis</p><p className="text-sm text-slate-600">{visit.diagnosis}</p></div>)}
+                          </div>
+                        </div>
                       ))}
                     </div>
                   )}
@@ -1031,16 +1049,6 @@ function DashboardApp({ signOut }: { signOut: any }) {
               </div>
             </div>
          </div>
-      )}
-
-      {/* PRINT VIEW */}
-      {treatingPatient && (
-        <div className="hidden print:block absolute top-0 left-0 w-full bg-white p-10 text-black">
-          <div className="border-b-4 border-slate-900 pb-6 mb-8 flex justify-between items-end"><div><h1 className="text-4xl font-black text-slate-900 tracking-tight">{activeHospitalName}</h1><p className="text-lg text-slate-500 font-medium">{treatingPatient.department} Department</p></div><div className="text-right"><p className="font-bold text-lg">Dr. Attending Physician</p><p className="text-slate-500 text-sm">Date: {new Date().toLocaleDateString()}</p></div></div>
-          <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-8 flex justify-between"><div><p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Patient Name</p><p className="text-2xl font-black text-slate-800">{treatingPatient.patientName}</p></div><div className="text-right"><p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Reported Symptoms</p><p className="font-bold text-slate-800">{treatingPatient.symptoms}</p></div></div>
-          <div className="mb-10"><h3 className="text-lg font-black text-slate-900 mb-3 uppercase tracking-wider border-b pb-2">Clinical Diagnosis</h3><p className="text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">{prescriptionData.diagnosis || "No diagnosis recorded."}</p></div>
-          <div><h3 className="text-lg font-black text-slate-900 mb-4 uppercase tracking-wider border-b pb-2">Rx: Medicines Prescribed</h3><table className="w-full text-left border-collapse"><thead><tr className="bg-slate-100 text-slate-600"><th className="p-3 border border-slate-300">Medicine Name</th><th className="p-3 border border-slate-300 w-32">Dosage</th><th className="p-3 border border-slate-300 w-32">Duration</th></tr></thead><tbody>{prescriptionData.medicines.filter(m => m.name !== "").map((med, idx) => (<tr key={idx} className="text-slate-800 font-bold"><td className="p-3 border border-slate-300 text-lg">{med.name}</td><td className="p-3 border border-slate-300">{med.dosage}</td><td className="p-3 border border-slate-300">{med.duration}</td></tr>))}</tbody></table></div>
-        </div>
       )}
     </div>
   );
