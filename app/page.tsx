@@ -5,7 +5,7 @@ import { Amplify } from 'aws-amplify';
 import { fetchAuthSession } from 'aws-amplify/auth'; 
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
-import { LayoutDashboard, Users, Calendar, FolderClock, LogOut, Search, Bell, Activity, Clock, AlertCircle, PlusCircle, Printer, X, MapPin, Building2, Star, Globe } from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, FolderClock, LogOut, Search, Bell, Activity, Clock, AlertCircle, PlusCircle, Printer, X, MapPin, Building2, Star, Globe, MapPinCheck, UserX, Coffee, ShieldAlert, ArrowRightLeft } from 'lucide-react';
 
 Amplify.configure({ Auth: { Cognito: { userPoolId: 'ap-south-1_p039t5AGU', userPoolClientId: '2c9mnkobjqfj0rk0b2dlc1tqvn' } } });
 const formFields = { signUp: { name: { order: 1, label: 'Full Name', placeholder: 'Enter your full name', isRequired: true }, username: { order: 2 }, password: { order: 3 }, confirm_password: { order: 4 } } };
@@ -17,128 +17,73 @@ const NETWORK_HOSPITALS = [
   { id: "HOSP-LMN", name: "Northpoint General", location: "North Hills", color: "emerald" }
 ];
 
-// ==========================================
-// TRANSLATION DICTIONARY (i18n)
-// ==========================================
 const TRANSLATIONS = {
   en: {
-    city_wide_network: "City-Wide Network",
-    find_a_hospital: "Find a Hospital",
-    select_location: "Select a partnered location below to see live wait times and book your visit.",
-    walk_in: "Walk-in",
-    schedule: "Schedule",
-    live_queue: "Live Queue",
-    waiting: "waiting",
-    est_wait: "Est. Wait",
-    min: "min",
-    walk_in_triage: "Walk-in Triage",
-    checked_into: "Checked into:",
-    change_hospital: "Change Hospital",
-    full_name: "Full Legal Name",
-    email_presc: "Email (For Digital Prescription)",
-    phone_queue: "Phone (e.g. +919876543210)",
-    symptoms_desc: "Describe your symptoms in detail...",
-    submit_ticket: "Submit & Get Ticket",
-    processing: "Processing AI Triage...",
-    digital_ticket: "Digital Queue Ticket",
-    routed_to: "Routed to:",
-    position: "Position",
-    your_turn: "It's your turn!",
-    proceed_doctor: "Please proceed to the doctor's office.",
-    leave_queue: "Leave Queue",
-    visit_complete: "Visit Complete",
-    feedback_prompt: "How was your experience with the doctor?",
-    feedback_saved: "Feedback Saved!",
-    return_home: "Return to Home"
+    city_wide_network: "City-Wide Network", find_a_hospital: "Find a Hospital", select_location: "Select a location to see wait times.",
+    walk_in: "Walk-in", schedule: "Schedule", live_queue: "Live Queue", waiting: "waiting", est_wait: "Est. Wait", min: "min",
+    walk_in_triage: "Walk-in Triage", checked_into: "Checked into:", change_hospital: "Change Hospital",
+    full_name: "Full Legal Name", email_presc: "Email (For Digital Prescription)", phone_queue: "Phone (e.g. +919876543210)", symptoms_desc: "Describe your symptoms...",
+    submit_ticket: "Submit & Get Ticket", processing: "Processing AI Triage...", digital_ticket: "Digital Queue Ticket",
+    routed_to: "Routed to:", position: "Position", your_turn: "It's your turn!", proceed_doctor: "Please proceed to the doctor's office.",
+    leave_queue: "Leave Queue", visit_complete: "Visit Complete", feedback_prompt: "How was your experience?",
+    feedback_saved: "Feedback Saved!", return_home: "Return to Home", confirm_arrival: "I Have Arrived", arrival_confirmed: "Arrival Confirmed", almost_up: "You are almost up! Please confirm.",
+    no_show_warning: "Warning: Multiple missed visits recorded. Please arrive on time.",
+    doc_on_break: "Doctor is on a short break until", doc_emergency: "Critical Emergency: Accepting High Priority only.",
+    delayed: "Delayed"
   },
   hi: {
-    city_wide_network: "शहर-व्यापी नेटवर्क",
-    find_a_hospital: "अस्पताल खोजें",
-    select_location: "लाइव वेट टाइम देखने और अपना अपॉइंटमेंट बुक करने के लिए नीचे एक अस्पताल चुनें।",
-    walk_in: "वॉक-इन",
-    schedule: "शेड्यूल",
-    live_queue: "लाइव कतार",
-    waiting: "प्रतीक्षा में",
-    est_wait: "अनुमानित समय",
-    min: "मिनट",
-    walk_in_triage: "वॉक-इन ट्राइएज",
-    checked_into: "अस्पताल:",
-    change_hospital: "अस्पताल बदलें",
-    full_name: "पूरा नाम",
-    email_presc: "ईमेल (पर्चे के लिए)",
-    phone_queue: "फ़ोन (उदा. +919876543210)",
-    symptoms_desc: "अपने लक्षणों का विस्तार से वर्णन करें...",
-    submit_ticket: "सबमिट करें और टिकट लें",
-    processing: "AI ट्राइएज चल रहा है...",
-    digital_ticket: "डिजिटल कतार टिकट",
-    routed_to: "विभाग:",
-    position: "कतार में स्थान",
-    your_turn: "अब आपकी बारी है!",
-    proceed_doctor: "कृपया डॉक्टर के केबिन में जाएं।",
-    leave_queue: "कतार छोड़ें",
-    visit_complete: "परामर्श पूर्ण",
-    feedback_prompt: "डॉक्टर के साथ आपका अनुभव कैसा रहा?",
-    feedback_saved: "प्रतिक्रिया सहेजी गई!",
-    return_home: "होम पर लौटें"
+    city_wide_network: "शहर-व्यापी नेटवर्क", find_a_hospital: "अस्पताल खोजें", select_location: "अस्पताल चुनें।",
+    walk_in: "वॉक-इन", schedule: "शेड्यूल", live_queue: "लाइव कतार", waiting: "प्रतीक्षा में", est_wait: "अनुमानित समय", min: "मिनट",
+    walk_in_triage: "वॉक-इन ट्राइएज", checked_into: "अस्पताल:", change_hospital: "अस्पताल बदलें",
+    full_name: "पूरा नाम", email_presc: "ईमेल (पर्चे के लिए)", phone_queue: "फ़ोन (उदा. +919876543210)", symptoms_desc: "लक्षणों का वर्णन करें...",
+    submit_ticket: "टिकट लें", processing: "AI ट्राइएज चल रहा है...", digital_ticket: "डिजिटल कतार टिकट",
+    routed_to: "विभाग:", position: "स्थान", your_turn: "अब आपकी बारी है!", proceed_doctor: "कृपया डॉक्टर के केबिन में जाएं।",
+    leave_queue: "कतार छोड़ें", visit_complete: "परामर्श पूर्ण", feedback_prompt: "आपका अनुभव कैसा रहा?",
+    feedback_saved: "प्रतिक्रिया सहेजी गई!", return_home: "होम पर लौटें", confirm_arrival: "मैं पहुँच गया हूँ", arrival_confirmed: "आगमन की पुष्टि", almost_up: "आपकी बारी आने वाली है! पुष्टि करें।",
+    no_show_warning: "चेतावनी: पिछली मुलाकातें मिस की हैं। समय पर पहुँचें।",
+    doc_on_break: "डॉक्टर ब्रेक पर हैं:", doc_emergency: "आपातकाल: केवल उच्च प्राथमिकता वाले मरीज।",
+    delayed: "विलंबित"
   },
   gu: {
-    city_wide_network: "શહેર-વ્યાપી નેટવર્ક",
-    find_a_hospital: "હોસ્પિટલ શોધો",
-    select_location: "લાઇવ વેઇટ ટાઇમ જોવા અને તમારી મુલાકાત બુક કરવા માટે નીચે એક હોસ્પિટલ પસંદ કરો.",
-    walk_in: "વૉક-ઇન",
-    schedule: "શેડ્યૂલ",
-    live_queue: "લાઇવ કતાર",
-    waiting: "પ્રતીક્ષામાં",
-    est_wait: "અંદાજિત સમય",
-    min: "મિનિટ",
-    walk_in_triage: "વૉક-ઇન ટ્રાયજ",
-    checked_into: "હોસ્પિટલ:",
-    change_hospital: "હોસ્પિટલ બદલો",
-    full_name: "પૂરું નામ",
-    email_presc: "ઇમેઇલ (પ્રિસ્ક્રિપ્શન માટે)",
-    phone_queue: "ફોન (દા.ત. +919876543210)",
-    symptoms_desc: "તમારા લક્ષણોનું વિગતવાર વર્ણન કરો...",
-    submit_ticket: "સબમિટ કરો અને ટિકિટ મેળવો",
-    processing: "AI ટ્રાયજ ચાલી રહ્યું છે...",
-    digital_ticket: "ડિજિટલ કતાર ટિકિટ",
-    routed_to: "વિભાગ:",
-    position: "કતારમાં સ્થાન",
-    your_turn: "હવે તમારો વારો છે!",
-    proceed_doctor: "કૃપા કરીને ડૉક્ટરની કેબિનમાં જાઓ.",
-    leave_queue: "કતાર છોડો",
-    visit_complete: "મુલાકાત પૂર્ણ",
-    feedback_prompt: "ડૉક્ટર સાથે તમારો અનુભવ કેવો રહ્યો?",
-    feedback_saved: "પ્રતિસાદ સાચવ્યો!",
-    return_home: "હોમ પર પાછા ફરો"
+    city_wide_network: "શહેર-વ્યાપી નેટવર્ક", find_a_hospital: "હોસ્પિટલ શોધો", select_location: "હોસ્પિટલ પસંદ કરો.",
+    walk_in: "વૉક-ઇન", schedule: "શેડ્યૂલ", live_queue: "લાઇવ કતાર", waiting: "પ્રતીક્ષામાં", est_wait: "અંદાજિત સમય", min: "મિનિટ",
+    walk_in_triage: "વૉક-ઇન ટ્રાયજ", checked_into: "હોસ્પિટલ:", change_hospital: "હોસ્પિટલ બદલો",
+    full_name: "પૂરું નામ", email_presc: "ઇમેઇલ (પ્રિસ્ક્રિપ્શન માટે)", phone_queue: "ફોન (દા.ત. +919876543210)", symptoms_desc: "લક્ષણોનું વર્ણન કરો...",
+    submit_ticket: "ટિકિટ મેળવો", processing: "AI ટ્રાયજ ચાલી રહ્યું છે...", digital_ticket: "ડિજિટલ કતાર ટિકિટ",
+    routed_to: "વિભાગ:", position: "સ્થાન", your_turn: "હવે તમારો વારો છે!", proceed_doctor: "કૃપા કરીને ડૉક્ટરની કેબિનમાં જાઓ.",
+    leave_queue: "કતાર છોડો", visit_complete: "મુલાકાત પૂર્ણ", feedback_prompt: "તમારો અનુભવ કેવો રહ્યો?",
+    feedback_saved: "પ્રતિસાદ સાચવ્યો!", return_home: "હોમ પર પાછા ફરો", confirm_arrival: "હું પહોંચી ગયો છું", arrival_confirmed: "આગમન કન્ફર્મ થયું", almost_up: "તમારો વારો આવવાનો છે! પુષ્ટિ કરો.",
+    no_show_warning: "ચેતવણી: અગાઉની મુલાકાતો ચૂકી ગયા છો. સમયસર પહોંચો.",
+    doc_on_break: "ડૉક્ટર બ્રેક પર છે:", doc_emergency: "ઇમરજન્સી: ફક્ત ઉચ્ચ પ્રાધાન્યતાવાળા દર્દીઓ.",
+    delayed: "વિલંબિત"
   }
 };
 
 const getTodayDateString = () => {
-  const now = new Date(); const offset = now.getTimezoneOffset();
-  return new Date(now.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
+  const now = new Date(); const offset = now.getTimezoneOffset(); return new Date(now.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
 };
-
 const isSlotInPast = (slotTimeStr: string, selectedDateStr: string) => {
-  const todayStr = getTodayDateString();
-  if (selectedDateStr < todayStr) return true; if (selectedDateStr > todayStr) return false;
+  const todayStr = getTodayDateString(); if (selectedDateStr < todayStr) return true; if (selectedDateStr > todayStr) return false;
   const now = new Date(); const [time, modifier] = slotTimeStr.split(' ');
   let [hours, minutes] = time.split(':'); let parsedHours = parseInt(hours, 10);
   if (parsedHours === 12 && modifier === 'AM') parsedHours = 0; if (parsedHours < 12 && modifier === 'PM') parsedHours += 12;
-  const slotTime = new Date(); slotTime.setHours(parsedHours, parseInt(minutes, 10), 0, 0);
-  return slotTime < now;
+  const slotTime = new Date(); slotTime.setHours(parsedHours, parseInt(minutes, 10), 0, 0); return slotTime < now;
 };
 
-// ==========================================
-// DASHBOARD COMPONENT
-// ==========================================
+export default function Home() {
+  return <Authenticator formFields={formFields}>{({ signOut }) => <DashboardApp signOut={signOut} />}</Authenticator>;
+}
+
 function DashboardApp({ signOut }: { signOut: any }) {
   const [patients, setPatients] = useState<any[]>([]);
   const [appointmentList, setAppointmentList] = useState<any[]>([]);
   const [cityWideQueue, setCityWideQueue] = useState<any[]>([]);
+  const [archiveData, setArchiveData] = useState<any[]>([]); 
   const [loading, setLoading] = useState(false);
   const [isDoctor, setIsDoctor] = useState(false);
   
-  // Language State
+  const [systemState, setSystemState] = useState<{docStatus: string, resumeTime?: string}>({ docStatus: "Available" });
+
   const [lang, setLang] = useState<'en' | 'hi' | 'gu'>('en');
   const t = (key: keyof typeof TRANSLATIONS.en) => TRANSLATIONS[lang][key] || TRANSLATIONS.en[key];
 
@@ -157,19 +102,20 @@ function DashboardApp({ signOut }: { signOut: any }) {
   const [prescriptionData, setPrescriptionData] = useState({ diagnosis: "", medicines: [{ name: "", dosage: "", duration: "" }] });
   const [patientTimeline, setPatientTimeline] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  
+  // NEW: Transfer State
+  const [showTransfer, setShowTransfer] = useState(false);
+  const [transferDept, setTransferDept] = useState("Cardiology");
+  const [transferNotes, setTransferNotes] = useState("");
 
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', age: '', address: '', symptoms: '', isEmergency: false });
-  const [myTicket, setMyTicket] = useState<{name: string, department: string, hospitalId: string, Timestamp: string} | null>(null);
+  const [myTicket, setMyTicket] = useState<{name: string, department: string, hospitalId: string, Timestamp: string, arrivalStatus: string} | null>(null);
   const [realAvgConsultTime, setRealAvgConsultTime] = useState(12);
-  
   const [ratingSubmitted, setRatingSubmitted] = useState(false);
   const [hoverRating, setHoverRating] = useState(0);
 
   const todayDateString = getTodayDateString();
-
-  const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
-    setToast({ show: true, msg, type }); setTimeout(() => setToast({ show: false, msg: '', type: 'success' }), 4000);
-  };
+  const showToast = (msg: string, type: 'success' | 'error' = 'success') => { setToast({ show: true, msg, type }); setTimeout(() => setToast({ show: false, msg: '', type: 'success' }), 4000); };
 
   useEffect(() => {
     const checkUserRole = async () => {
@@ -177,101 +123,107 @@ function DashboardApp({ signOut }: { signOut: any }) {
         const { tokens } = await fetchAuthSession(); 
         const accessGroups = (tokens?.accessToken?.payload['cognito:groups'] as string[]) || [];
         const idGroups = (tokens?.idToken?.payload['cognito:groups'] as string[]) || [];
-        if ([...accessGroups, ...idGroups].includes('Doctors')) {
-          setIsDoctor(true); setActiveTab("Dashboard");
-        } else {
-          setActiveTab("City View"); 
-        }
-      } catch (error) { console.error("Error checking role:", error); }
+        if ([...accessGroups, ...idGroups].includes('Doctors')) { setIsDoctor(true); setActiveTab("Dashboard"); } 
+        else { setActiveTab("City View"); }
+      } catch (error) { console.error(error); }
     };
     checkUserRole();
+    fetch('/api/queue?department=Archive').then(res => res.json()).then(data => setArchiveData(data)).catch(console.error);
   }, []);
 
   const fetchQueue = async (mode: string, dept: string, isAutoRefresh = false) => {
     if (!isAutoRefresh) setLoading(true); 
     try {
       if (mode === "Appointments") {
-        const d = bookingDate || todayDateString;
-        const response = await fetch(`/api/queue?type=appointments&department=${dept}&date=${d}&hospitalId=${activeHospitalId}`);
-        const data = await response.json();
-        if (Array.isArray(data)) setAppointmentList(data);
+        const res = await fetch(`/api/queue?type=appointments&department=${dept}&date=${bookingDate || todayDateString}&hospitalId=${activeHospitalId}`);
+        setAppointmentList(await res.json() || []);
       } else if (mode === "City View") {
-        const response = await fetch(`/api/queue?type=all_active`);
-        const data = await response.json();
-        if (Array.isArray(data)) setCityWideQueue(data);
+        const res = await fetch(`/api/queue?type=all_active`);
+        setCityWideQueue(await res.json() || []);
+        
+      } else if (mode === "Live" && activeTab === "My Ticket" && myTicket) {
+        // ========================================================
+        // BUG FIX: Robust Transfer Detection for Patient UI
+        // Scan the entire hospital to see if the doctor moved their department!
+        // ========================================================
+        const res = await fetch(`/api/queue?type=all_active`);
+        const allData = await res.json() || [];
+        const myLiveRecord = allData.find((p: any) => p.Timestamp === myTicket.Timestamp);
+
+        if (myLiveRecord) {
+          const deptRes = await fetch(`/api/queue?department=${myLiveRecord.department}&hospitalId=${activeHospitalId}`);
+          const deptData = await deptRes.json() || [];
+
+          const sysRecord = deptData.find((p: any) => p.Timestamp === "SYSTEM_STATE");
+          if (sysRecord) setSystemState(sysRecord); else setSystemState({ docStatus: "Available" });
+
+          const realPatients = deptData.filter((p: any) => p.Timestamp !== "SYSTEM_STATE");
+          setPatients(realPatients);
+
+          if (myLiveRecord.department !== myTicket.department || myLiveRecord.arrivalStatus !== myTicket.arrivalStatus) {
+            setMyTicket({...myTicket, department: myLiveRecord.department, arrivalStatus: myLiveRecord.arrivalStatus});
+            if (myLiveRecord.department !== myTicket.department) {
+               showToast(`Notice: You have been transferred to ${myLiveRecord.department}`);
+            }
+          }
+        } else {
+          setPatients([]); // Triggers the Feedback screen
+        }
+
       } else {
+        // Standard Doctor Dashboard Live Fetch
         const targetDept = mode === "Archive" ? "Archive" : dept;
-        const response = await fetch(`/api/queue?department=${targetDept}&hospitalId=${activeHospitalId}`);
-        const data = await response.json();
-        if (Array.isArray(data)) setPatients(data);
+        const res = await fetch(`/api/queue?department=${targetDept}&hospitalId=${activeHospitalId}`);
+        const data = await res.json() || [];
+        
+        const sysRecord = data.find((p: any) => p.Timestamp === "SYSTEM_STATE");
+        if (sysRecord) setSystemState(sysRecord); else setSystemState({ docStatus: "Available" });
+
+        const realPatients = data.filter((p: any) => p.Timestamp !== "SYSTEM_STATE");
+        setPatients(realPatients);
       }
-    } catch (error) { console.error("Error fetching data:", error); }
+    } catch (error) { console.error(error); }
     if (!isAutoRefresh) setLoading(false);
   };
 
   useEffect(() => {
     const fetchTarget = activeTab === "Appointments" ? "Appointments" : (activeTab === "Archive" ? "Archive" : (activeTab === "City View" ? "City View" : "Live"));
     const fetchDept = (activeTab === "My Ticket" && myTicket) ? myTicket.department : selectedDept;
-    
     fetchQueue(fetchTarget, fetchDept, false);
     const intervalId = setInterval(() => {
-      if ((activeTab === "Dashboard" || activeTab === "Appointments" || activeTab === "City View" || activeTab === "My Ticket") && !treatingPatient) {
-        fetchQueue(fetchTarget, fetchDept, true);
-      }
+      if ((activeTab === "Dashboard" || activeTab === "Appointments" || activeTab === "City View" || activeTab === "My Ticket") && !treatingPatient) fetchQueue(fetchTarget, fetchDept, true);
     }, 5000);
     return () => clearInterval(intervalId);
   }, [activeTab, selectedDept, bookingDate, treatingPatient, activeHospitalId, myTicket]);
 
-  const handleInputChange = (e: any) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value });
-  };
-
-  // ==========================================
-  // PATIENT ACTIONS
-  // ==========================================
-  const selectHospitalForVisit = (hospitalId: string, type: "Walk-in" | "Schedule") => {
-    setActiveHospitalId(hospitalId); setActiveTab(type);
-  };
+  const handleInputChange = (e: any) => { const { name, value, type, checked } = e.target; setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value }); };
+  const selectHospitalForVisit = (hospitalId: string, type: "Walk-in" | "Schedule") => { setActiveHospitalId(hospitalId); setActiveTab(type); };
 
   const checkAvailability = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!bookingDate) return showToast("Please select a date first.", "error");
-    setLoading(true);
+    e.preventDefault(); if (!bookingDate) return showToast("Please select a date first.", "error"); setLoading(true);
     try {
-      const response = await fetch(`/api/queue?type=appointments&department=${selectedDept}&date=${bookingDate}&hospitalId=${activeHospitalId}`);
-      const data = await response.json();
-      if (!response.ok) { showToast(`Error: ${data.details || data.error}`, "error"); setLoading(false); return; }
-      setBookedTimeSlots(Array.isArray(data) ? data.map((app: any) => app.timeSlot) : []);
-      setShowSlots(true);
+      const res = await fetch(`/api/queue?type=appointments&department=${selectedDept}&date=${bookingDate}&hospitalId=${activeHospitalId}`);
+      const data = await res.json();
+      if (!res.ok) { showToast(`Error: ${data.details || data.error}`, "error"); setLoading(false); return; }
+      setBookedTimeSlots(Array.isArray(data) ? data.map((app: any) => app.timeSlot) : []); setShowSlots(true);
     } catch (error) { showToast("Network error.", "error"); }
     setLoading(false);
   };
 
   const confirmBooking = async () => {
-    if (!selectedTimeSlot || !formData.name || !formData.symptoms) return showToast("Please fill all details.", "error");
-    setLoading(true);
+    if (!selectedTimeSlot || !formData.name || !formData.symptoms) return showToast("Please fill all details.", "error"); setLoading(true);
     try {
-      const response = await fetch('/api/queue', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: "bookAppointment", department: selectedDept, date: bookingDate, timeSlot: selectedTimeSlot, patientName: formData.name, email: formData.email, phone: formData.phone, symptoms: formData.symptoms, hospitalId: activeHospitalId })
-      });
-      const responseData = await response.json();
-      if (!response.ok) {
-        showToast(`Booking Failed: ${responseData.details}`, "error"); checkAvailability({ preventDefault: () => {} } as React.FormEvent); 
-      } else {
-        showToast("✅ Appointment Booked Successfully!");
-        setFormData({ name: '', email: '', phone: '', age: '', address: '', symptoms: '', isEmergency: false });
-        setSelectedTimeSlot(""); setShowSlots(false); setBookingDate(""); setActiveTab("City View");
-      }
+      const res = await fetch('/api/queue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "bookAppointment", department: selectedDept, date: bookingDate, timeSlot: selectedTimeSlot, patientName: formData.name, email: formData.email, phone: formData.phone, symptoms: formData.symptoms, hospitalId: activeHospitalId }) });
+      const responseData = await res.json();
+      if (!res.ok) { showToast(`Booking Failed: ${responseData.details}`, "error"); checkAvailability({ preventDefault: () => {} } as React.FormEvent); } 
+      else { showToast("✅ Appointment Booked Successfully!"); setFormData({ name: '', email: '', phone: '', age: '', address: '', symptoms: '', isEmergency: false }); setSelectedTimeSlot(""); setShowSlots(false); setBookingDate(""); setActiveTab("City View"); }
     } catch (error) { showToast("Error booking appointment.", "error"); }
     setLoading(false);
   };
 
   const calculateRealWaitTime = async (dept: string, hId: string) => {
     try {
-      const res = await fetch(`/api/queue?department=Archive&hospitalId=${hId}`);
-      const data = await res.json();
+      const res = await fetch(`/api/queue?department=Archive&hospitalId=${hId}`); const data = await res.json();
       const deptHistory = data.filter((p: any) => p.department === dept && p.calledAt);
       deptHistory.sort((a: any, b: any) => new Date(b.calledAt).getTime() - new Date(a.calledAt).getTime());
       const last5 = deptHistory.slice(0, 5);
@@ -287,116 +239,142 @@ function DashboardApp({ signOut }: { signOut: any }) {
   };
 
   const addPatient = async (e: React.FormEvent) => {
-    e.preventDefault(); 
-    if (!formData.name || !formData.symptoms) return;
-    setLoading(true); 
+    e.preventDefault(); if (!formData.name || !formData.symptoms) return; setLoading(true); 
     try {
-      const response = await fetch('/api/queue', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({...formData, hospitalId: activeHospitalId }) 
-      });
-      const responseData = await response.json();
-      if (!response.ok) return showToast(`Backend Error: ${responseData.details}`, "error");
+      const res = await fetch('/api/queue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({...formData, hospitalId: activeHospitalId }) });
+      const responseData = await res.json();
+      if (!res.ok) { setLoading(false); return showToast(responseData.details || responseData.error, "error"); }
       
       const assignedDept = responseData.department || "General";
-      setMyTicket({ name: formData.name, department: assignedDept, hospitalId: activeHospitalId, Timestamp: responseData.Timestamp });
-      setRatingSubmitted(false);
-      calculateRealWaitTime(assignedDept, activeHospitalId);
-      
+      setMyTicket({ name: formData.name, department: assignedDept, hospitalId: activeHospitalId, Timestamp: responseData.Timestamp, arrivalStatus: "Pending" });
+      setRatingSubmitted(false); calculateRealWaitTime(assignedDept, activeHospitalId);
       setFormData({ name: '', email: '', phone: '', age: '', address: '', symptoms: '', isEmergency: false });
       if (responseData.department) setSelectedDept(responseData.department);
-      setActiveTab("My Ticket"); 
-      showToast("Triage complete! You are in the queue.");
+      setActiveTab("My Ticket"); showToast("Triage complete! You are in the queue.");
     } catch (error) { showToast("Error submitting triage.", "error"); }
     setLoading(false);
   };
 
   const submitRating = async (stars: number) => {
+    if (!myTicket) return; setRatingSubmitted(true);
+    try { await fetch('/api/queue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "submitRating", Timestamp: myTicket.Timestamp, rating: stars }) }); showToast(t('feedback_saved')); } 
+    catch (error) { console.error("Rating failed", error); }
+  };
+
+  const markArrived = async () => {
     if (!myTicket) return;
-    setRatingSubmitted(true);
+    try { await fetch('/api/queue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "markArrived", department: myTicket.department, Timestamp: myTicket.Timestamp }) }); setMyTicket({...myTicket, arrivalStatus: "Arrived"}); showToast(t('arrival_confirmed')); } 
+    catch (error) { showToast("Error confirming arrival", "error"); }
+  };
+
+  const markNoShow = async (patient: any) => {
+    if (!confirm(`Mark ${patient.patientName} as No-Show and remove from queue?`)) return;
     try {
-      await fetch('/api/queue', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ action: "submitRating", Timestamp: myTicket.Timestamp, rating: stars }) 
-      });
-      showToast(t('feedback_saved'));
-    } catch (error) { console.error("Rating failed", error); }
+      await fetch('/api/queue', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...patient, isNoShow: true }) });
+      showToast(`${patient.patientName} marked as No-Show.`, "error"); fetchQueue("Live", selectedDept, false);
+      fetch('/api/queue?department=Archive').then(res => res.json()).then(data => setArchiveData(data)).catch(console.error);
+    } catch (error) { showToast("Error marking No-Show", "error"); }
+  };
+
+  const updateDoctorState = async (newStatus: string, breakMinutes: number = 0) => {
+    const resumeTime = breakMinutes > 0 ? new Date(Date.now() + breakMinutes * 60000).toISOString() : null;
+    try {
+      await fetch('/api/queue', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: "updateDoctorStatus", department: selectedDept, hospitalId: activeHospitalId, docStatus: newStatus, resumeTime: resumeTime }) });
+      setSystemState({ docStatus: newStatus, resumeTime: resumeTime || undefined });
+      showToast(`Status updated to ${newStatus}`);
+    } catch (err) { showToast("Failed to update status", "error"); }
   };
 
   // ==========================================
   // DOCTOR ACTIONS
   // ==========================================
   const startTreatment = async (patient: any) => {
-    setTreatingPatient(patient);
-    setPrescriptionData({ diagnosis: "", medicines: [{ name: "", dosage: "", duration: "" }] });
-    setPatientTimeline([]); setLoadingHistory(true);
+    setTreatingPatient(patient); setPrescriptionData({ diagnosis: "", medicines: [{ name: "", dosage: "", duration: "" }] }); setPatientTimeline([]); setLoadingHistory(true);
+    
+    // Reset transfer state when opening a new patient
+    setShowTransfer(false);
+    setTransferDept(patient.department === "General" ? "Cardiology" : "General");
+    setTransferNotes("");
+
     try {
-      const res = await fetch(`/api/queue?department=Archive&hospitalId=${activeHospitalId}`);
-      const data = await res.json();
+      const res = await fetch(`/api/queue?department=Archive&hospitalId=${activeHospitalId}`); const data = await res.json();
       const history = data.filter((p: any) => {
-        const cEmail = (patient.email || "").trim().toLowerCase();
-        const pEmail = (p.email || "").trim().toLowerCase();
-        const cName = (patient.patientName || "").trim().toLowerCase();
-        const pName = (p.patientName || "").trim().toLowerCase();
-        if (cName !== pName) return false;
-        if (cEmail !== "" && pEmail !== "") if (cEmail !== pEmail) return false;
-        return true; 
+        const cEmail = (patient.email || "").trim().toLowerCase(); const pEmail = (p.email || "").trim().toLowerCase();
+        const cName = (patient.patientName || "").trim().toLowerCase(); const pName = (p.patientName || "").trim().toLowerCase();
+        if (cName !== pName) return false; if (cEmail !== "" && pEmail !== "") if (cEmail !== pEmail) return false; return true; 
       });
       setPatientTimeline(history.sort((a: any, b: any) => new Date(b.Timestamp).getTime() - new Date(a.Timestamp).getTime()));
-    } catch (error) { console.error("Failed to load patient history:", error); }
+    } catch (error) { console.error(error); }
     setLoadingHistory(false);
   };
 
-  const handleMedicineChange = (index: number, field: string, value: string) => {
-    const newMedicines = [...prescriptionData.medicines];
-    newMedicines[index] = { ...newMedicines[index], [field]: value };
-    setPrescriptionData({ ...prescriptionData, medicines: newMedicines });
+  // --- NEW: Handle Department Transfer ---
+  const handleTransfer = async () => {
+    if (!treatingPatient) return;
+    try {
+      await fetch('/api/queue', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: "transferPatient",
+          oldDepartment: treatingPatient.department,
+          Timestamp: treatingPatient.Timestamp,
+          newDepartment: transferDept,
+          transferNotes: transferNotes,
+          patientData: treatingPatient
+        })
+      });
+      showToast(`Patient successfully transferred to ${transferDept}!`);
+      setTreatingPatient(null);
+      fetchQueue("Live", selectedDept, false);
+    } catch (error) {
+      showToast("Transfer failed", "error");
+    }
   };
-  
-  const addMedicineRow = () => {
-    setPrescriptionData({ ...prescriptionData, medicines: [...prescriptionData.medicines, { name: "", dosage: "", duration: "" }] });
-  };
+
+  const handleMedicineChange = (index: number, field: string, value: string) => { const newMedicines = [...prescriptionData.medicines]; newMedicines[index] = { ...newMedicines[index], [field]: value }; setPrescriptionData({ ...prescriptionData, medicines: newMedicines }); };
+  const addMedicineRow = () => { setPrescriptionData({ ...prescriptionData, medicines: [...prescriptionData.medicines, { name: "", dosage: "", duration: "" }] }); };
 
   const finishTreatment = async () => {
     try {
       window.print();
       const completedPatient = { ...treatingPatient, diagnosis: prescriptionData.diagnosis, medicines: prescriptionData.medicines.filter(m => m.name !== "") };
       await fetch('/api/queue', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(completedPatient) });
-      showToast("Prescription saved & emailed securely!");
-      setTreatingPatient(null);
-      fetchQueue("Live", selectedDept, false); 
+      showToast("Prescription saved & emailed securely!"); setTreatingPatient(null); fetchQueue("Live", selectedDept, false); 
     } catch (error) { showToast("Error saving prescription.", "error"); }
   };
 
-  const filteredPatients = patients.filter(p => {
-    const s = searchTerm.toLowerCase();
-    return (p.patientName || "").toLowerCase().includes(s) || (p.symptoms || "").toLowerCase().includes(s);
-  });
-
-  const getUrgencyBadge = (urgency: string) => {
-    if (urgency === "High") return <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-md flex items-center gap-1"><AlertCircle size={14}/> HIGH</span>;
-    if (urgency === "Medium") return <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-md">MEDIUM</span>;
-    return <span className="px-2 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-md">LOW</span>;
-  };
-
+  // ==========================================
+  // MATH & FILTERING
+  // ==========================================
+  const filteredPatients = patients.filter(p => { const s = searchTerm.toLowerCase(); return (p.patientName || "").toLowerCase().includes(s) || (p.symptoms || "").toLowerCase().includes(s); });
+  
   let myQueuePosition = 0, estimatedWait = 0;
   if (!isDoctor && myTicket && activeTab === "My Ticket") {
     const deptQueue = patients.filter(p => p.department === myTicket.department && p.hospitalId === myTicket.hospitalId);
     deptQueue.sort((a, b) => new Date(a.Timestamp).getTime() - new Date(b.Timestamp).getTime());
     const myIndex = deptQueue.findIndex(p => (p.patientName || "").toLowerCase() === myTicket.name.toLowerCase());
-    if (myIndex !== -1) {
+    
+    if (myIndex !== -1) { 
       myQueuePosition = myIndex + 1; 
-      estimatedWait = myIndex * realAvgConsultTime; 
+      let breakPenalty = 0;
+      if (systemState.docStatus === "Break" && systemState.resumeTime) {
+        const diffInMs = new Date(systemState.resumeTime).getTime() - new Date().getTime();
+        if (diffInMs > 0) breakPenalty = Math.ceil(diffInMs / 60000);
+      }
+      estimatedWait = (myIndex * realAvgConsultTime) + breakPenalty; 
     }
   }
 
   const emergenciesCount = patients.filter(p => p.urgency === 'High').length;
   const activeHospitalName = NETWORK_HOSPITALS.find(h => h.id === activeHospitalId)?.name;
-
-  const ratedArchivePatients = patients.filter(p => p.rating && p.rating > 0);
-  const avgHospitalRating = ratedArchivePatients.length > 0 
-    ? (ratedArchivePatients.reduce((sum, p) => sum + p.rating, 0) / ratedArchivePatients.length).toFixed(1) 
-    : "N/A";
+  const ratedArchivePatients = archiveData.filter(p => p.hospitalId === activeHospitalId && p.rating && p.rating > 0);
+  const avgHospitalRating = ratedArchivePatients.length > 0 ? (ratedArchivePatients.reduce((sum, p) => sum + p.rating, 0) / ratedArchivePatients.length).toFixed(1) : "N/A";
+  
+  const hospitalArchive = archiveData.filter(p => p.hospitalId === activeHospitalId);
+  const noShowCount = hospitalArchive.filter(p => p.status === "No-Show").length;
+  const noShowRate = hospitalArchive.length > 0 ? Math.round((noShowCount / hospitalArchive.length) * 100) : 0;
+  const myGhostCount = formData.email ? archiveData.filter(p => p.email === formData.email && p.status === "No-Show").length : 0;
+  const hasGhostWarning = myGhostCount >= 3;
 
   return (
     <div className="flex h-screen w-full bg-slate-50 font-sans text-slate-900 overflow-hidden">
@@ -423,32 +401,23 @@ function DashboardApp({ signOut }: { signOut: any }) {
 
       <div className="print:hidden flex-1 flex flex-col min-w-0 overflow-hidden">
         
-        {/* TOP HEADER */}
         <header className="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 z-10">
           <div className="flex items-center gap-4 w-1/2">
             {isDoctor ? (
               <div className="flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-lg border border-indigo-100">
                 <Building2 size={18} className="text-indigo-600" /><span className="text-sm font-bold text-indigo-900 mr-2">Assigned Hospital:</span>
-                <select value={activeHospitalId} onChange={(e) => setActiveHospitalId(e.target.value)} className="bg-transparent font-black text-indigo-700 outline-none cursor-pointer">
-                  {NETWORK_HOSPITALS.map(h => <option key={h.id} value={h.id}>{h.name}</option>)}
-                </select>
+                <select value={activeHospitalId} onChange={(e) => setActiveHospitalId(e.target.value)} className="bg-transparent font-black text-indigo-700 outline-none cursor-pointer">{NETWORK_HOSPITALS.map(h => <option key={h.id} value={h.id}>{h.name}</option>)}</select>
               </div>
             ) : (<h2 className="text-xl font-black text-slate-800 flex items-center gap-2"><MapPin className="text-blue-600"/> {t('city_wide_network')}</h2>)}
           </div>
           
           <div className="flex items-center gap-6">
-            {/* NEW: LANGUAGE SWITCHER */}
             {!isDoctor && (
               <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full">
                 <Globe size={16} className="text-slate-500" />
-                <select value={lang} onChange={(e: any) => setLang(e.target.value)} className="bg-transparent text-sm font-bold text-slate-700 outline-none cursor-pointer">
-                  <option value="en">English</option>
-                  <option value="hi">हिंदी</option>
-                  <option value="gu">ગુજરાતી</option>
-                </select>
+                <select value={lang} onChange={(e: any) => setLang(e.target.value)} className="bg-transparent text-sm font-bold text-slate-700 outline-none cursor-pointer"><option value="en">English</option><option value="hi">हिंदी</option><option value="gu">ગુજરાતી</option></select>
               </div>
             )}
-
             {(activeTab === "Dashboard" || activeTab === "Archive") && (
               <select value={selectedDept} onChange={(e) => setSelectedDept(e.target.value)} className="py-2 px-4 bg-white border border-slate-200 rounded-full text-sm font-semibold shadow-sm outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
                 <option value="General">General Dept</option><option value="Cardiology">Cardiology</option><option value="Pediatrics">Pediatrics</option><option value="Orthopedics">Orthopedics</option><option value="Neurology">Neurology</option>
@@ -467,12 +436,27 @@ function DashboardApp({ signOut }: { signOut: any }) {
           )}
 
           {isDoctor && activeTab === "Dashboard" && (
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"><div className="p-4 bg-blue-50 text-blue-600 rounded-xl"><Users size={24} /></div><div><p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Queue Total</p><p className="text-3xl font-black text-slate-800">{patients.length}</p></div></div>
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"><div className="p-4 bg-emerald-50 text-emerald-600 rounded-xl"><Clock size={24} /></div><div><p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Avg Wait</p><p className="text-3xl font-black text-slate-800">{realAvgConsultTime} <span className="text-lg">min</span></p></div></div>
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"><div className="p-4 bg-yellow-50 text-yellow-600 rounded-xl"><Star size={24} /></div><div><p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Patient Rating</p><p className="text-3xl font-black text-slate-800">{avgHospitalRating}</p></div></div>
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"><div className="p-4 bg-red-50 text-red-600 rounded-xl"><AlertCircle size={24} /></div><div><p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Emergencies</p><p className="text-3xl font-black text-slate-800">{emergenciesCount}</p></div></div>
-            </div>
+            <>
+              <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mb-6 flex justify-between items-center bg-gradient-to-r from-slate-50 to-white">
+                <div>
+                  <h3 className="font-black text-slate-800">Doctor Queue Status</h3>
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">For {selectedDept} Department</p>
+                </div>
+                <div className="flex gap-3 bg-white p-1.5 rounded-xl border border-slate-200">
+                  <button onClick={() => updateDoctorState("Available")} className={`flex items-center gap-2 px-5 py-2 rounded-lg font-bold text-sm transition-all ${systemState.docStatus === "Available" ? "bg-emerald-500 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`}><Activity size={16}/> Available</button>
+                  <button onClick={() => updateDoctorState("Break", 15)} className={`flex items-center gap-2 px-5 py-2 rounded-lg font-bold text-sm transition-all ${systemState.docStatus === "Break" ? "bg-orange-500 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`}><Coffee size={16}/> 15m Break</button>
+                  <button onClick={() => updateDoctorState("EmergencyOnly")} className={`flex items-center gap-2 px-5 py-2 rounded-lg font-bold text-sm transition-all ${systemState.docStatus === "EmergencyOnly" ? "bg-red-600 text-white shadow-md" : "text-slate-500 hover:bg-slate-100"}`}><ShieldAlert size={16}/> Emergency Only</button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"><div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Users size={20} /></div><div><p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Queue Total</p><p className="text-2xl font-black text-slate-800">{patients.length}</p></div></div>
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"><div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><Clock size={20} /></div><div><p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Avg Wait</p><p className="text-2xl font-black text-slate-800">{realAvgConsultTime} <span className="text-sm">min</span></p></div></div>
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"><div className="p-3 bg-yellow-50 text-yellow-600 rounded-xl"><Star size={20} /></div><div><p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Rating</p><p className="text-2xl font-black text-slate-800">{avgHospitalRating}</p></div></div>
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"><div className="p-3 bg-red-50 text-red-600 rounded-xl"><AlertCircle size={20} /></div><div><p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Emergencies</p><p className="text-2xl font-black text-slate-800">{emergenciesCount}</p></div></div>
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4"><div className="p-3 bg-orange-50 text-orange-600 rounded-xl"><UserX size={20} /></div><div><p className="text-xs font-bold text-slate-400 uppercase tracking-wider">No-Show Rate</p><p className="text-2xl font-black text-orange-600">{noShowRate}%</p></div></div>
+              </div>
+            </>
           )}
 
           {!isDoctor && activeTab === "City View" && (
@@ -480,7 +464,7 @@ function DashboardApp({ signOut }: { signOut: any }) {
               <div className="mb-10"><h2 className="text-4xl font-black text-slate-800 mb-3 tracking-tight">{t('find_a_hospital')}</h2><p className="text-lg text-slate-500">{t('select_location')}</p></div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {NETWORK_HOSPITALS.map(hospital => {
-                  const hospitalQueue = cityWideQueue.filter(p => p.hospitalId === hospital.id).length;
+                  const hospitalQueue = cityWideQueue.filter(p => p.hospitalId === hospital.id && p.Timestamp !== "SYSTEM_STATE").length;
                   const estWait = hospitalQueue * 12; 
                   return (
                     <div key={hospital.id} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all transform hover:-translate-y-1 group">
@@ -515,8 +499,35 @@ function DashboardApp({ signOut }: { signOut: any }) {
                       <div className="space-y-3">
                         {filteredPatients.map((patient, index) => (
                           <div key={index} className="group flex flex-col md:flex-row justify-between items-center p-5 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="flex-1"><div className="flex items-center gap-3 mb-1"><span className="font-bold text-slate-800 text-lg">{patient.patientName}</span>{activeTab === "Dashboard" && getUrgencyBadge(patient.urgency)}{activeTab === "Archive" && patient.rating > 0 && <span className="flex items-center text-yellow-500 text-sm font-bold ml-2"><Star size={14} fill="currentColor" className="mr-1"/> {patient.rating}</span>}</div><span className="text-sm text-slate-500 font-medium">Issue: <span className="text-slate-700">{patient.symptoms}</span></span></div>
-                            {activeTab === "Dashboard" && <button onClick={() => startTreatment(patient)} className="px-6 py-2.5 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold rounded-lg transition-colors ml-4 shrink-0">Treat Patient</button>}
+                            
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-1">
+                                <span className="font-bold text-slate-800 text-lg">{patient.patientName}</span>
+                                {activeTab === "Dashboard" && (
+                                  <>
+                                    <span className={`px-2 py-0.5 text-[10px] font-black uppercase rounded-md border ${patient.arrivalStatus === "Arrived" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-slate-100 text-slate-500 border-slate-200"}`}>
+                                      {patient.arrivalStatus === "Arrived" ? "✓ Checked In" : "Pending Arrival"}
+                                    </span>
+                                  </>
+                                )}
+                                {activeTab === "Archive" && patient.status === "No-Show" && <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs font-bold rounded-md">NO-SHOW</span>}
+                              </div>
+                              <span className="text-sm text-slate-500 font-medium">Issue: <span className="text-slate-700">{patient.symptoms}</span></span>
+                              
+                              {/* NEW: DISPLAY TRANSFER NOTES */}
+                              {activeTab === "Dashboard" && patient.transferNotes && (
+                                <span className="inline-block mt-2 text-xs text-indigo-700 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-md font-bold flex items-center gap-2 max-w-fit">
+                                  <ArrowRightLeft size={14}/> Transferred: {patient.transferNotes}
+                                </span>
+                              )}
+                            </div>
+
+                            {activeTab === "Dashboard" && (
+                              <div className="flex items-center gap-2 shrink-0">
+                                <button onClick={() => startTreatment(patient)} className="px-6 py-2.5 bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white font-bold rounded-lg transition-colors">Treat Patient</button>
+                                <button onClick={() => markNoShow(patient)} className="p-2.5 bg-white text-orange-500 border border-slate-200 hover:bg-orange-50 hover:border-orange-200 rounded-lg transition-colors tooltip-trigger" title="Mark as No-Show"><UserX size={20} /></button>
+                              </div>
+                            )}
                             {activeTab === "Archive" && patient.diagnosis && <div className="text-right ml-4 max-w-sm"><p className="text-xs font-bold text-slate-400 uppercase mb-1">Diagnosis</p><p className="text-sm text-slate-700 truncate">{patient.diagnosis}</p></div>}
                           </div>
                         ))}
@@ -536,6 +547,9 @@ function DashboardApp({ signOut }: { signOut: any }) {
                 <div className="space-y-3">{loading ? <div className="animate-pulse bg-slate-100 h-20 rounded-xl"></div> : appointmentList.length === 0 ? <p className="text-slate-500 text-center py-10 font-medium">No appointments scheduled for this date.</p> : appointmentList.map((app, i) => (<div key={i} className="flex justify-between items-center p-5 bg-white rounded-xl border border-slate-100 shadow-sm"><div><p className="font-bold text-lg text-slate-800">{app.patientName}</p><p className="text-sm text-slate-500">{app.symptoms}</p></div><span className="px-4 py-2 bg-indigo-50 text-indigo-700 font-bold rounded-lg border border-indigo-100 tracking-wide">{app.timeSlot}</span></div>))}</div>
               ) : (
                 <div className="max-w-3xl">
+                  {hasGhostWarning && (
+                     <div className="mb-6 p-4 bg-orange-50 border border-orange-200 text-orange-800 rounded-xl flex items-start gap-3"><AlertCircle className="shrink-0 mt-0.5" size={20}/><p className="text-sm font-medium">{t('no_show_warning')}</p></div>
+                  )}
                   <form className="grid grid-cols-2 gap-6 mb-8">
                     <div><label className="block text-xs font-bold text-slate-400 uppercase mb-2">{t('full_name')}</label><input type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500" /></div>
                     <div><label className="block text-xs font-bold text-slate-400 uppercase mb-2">{t('email_presc')}</label><input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500" /></div>
@@ -559,6 +573,11 @@ function DashboardApp({ signOut }: { signOut: any }) {
           {!isDoctor && activeTab === "Walk-in" && (
             <div className="p-10 max-w-2xl mx-auto mt-4 bg-white rounded-2xl shadow-sm border border-slate-200">
               <div className="flex justify-between items-start mb-10 border-b border-slate-100 pb-6"><div><h2 className="text-3xl font-black text-slate-800 mb-2">{t('walk_in_triage')}</h2><p className="text-slate-500 font-medium flex items-center gap-2"><Building2 size={16}/> {t('checked_into')} <strong className="text-blue-600">{activeHospitalName}</strong></p></div><button onClick={() => setActiveTab("City View")} className="text-sm font-bold text-slate-400 hover:text-blue-600 transition-colors">{t('change_hospital')}</button></div>
+              
+              {hasGhostWarning && (
+                 <div className="mb-6 p-4 bg-orange-50 border border-orange-200 text-orange-800 rounded-xl flex items-start gap-3"><AlertCircle className="shrink-0 mt-0.5" size={20}/><p className="text-sm font-medium">{t('no_show_warning')}</p></div>
+              )}
+
               <form onSubmit={addPatient} className="space-y-5">
                 <input type="text" name="name" required value={formData.name} onChange={handleInputChange} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder={t('full_name')} />
                 <div className="grid grid-cols-2 gap-4">
@@ -571,8 +590,23 @@ function DashboardApp({ signOut }: { signOut: any }) {
             </div>
           )}
 
+          {/* PATIENT LIVE TICKET */}
           {!isDoctor && activeTab === "My Ticket" && myTicket && (
             <div className="p-10 md:p-20 text-center flex flex-col items-center justify-center min-h-[60vh]">
+              
+              {systemState.docStatus === "Break" && systemState.resumeTime && (
+                 <div className="bg-orange-100 text-orange-800 border border-orange-200 p-4 rounded-xl mb-6 flex items-center justify-center gap-3 animate-in fade-in duration-500">
+                   <Clock size={20}/>
+                   <p className="font-bold">{t('doc_on_break')} {new Date(systemState.resumeTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}.</p>
+                 </div>
+              )}
+              {systemState.docStatus === "EmergencyOnly" && (
+                 <div className="bg-red-100 text-red-800 border border-red-200 p-4 rounded-xl mb-6 flex items-center justify-center gap-3 animate-in fade-in duration-500">
+                   <ShieldAlert size={20}/>
+                   <p className="font-bold">{t('doc_emergency')}</p>
+                 </div>
+              )}
+
               <div className="bg-slate-50 border border-slate-200 rounded-3xl p-10 shadow-sm max-w-xl w-full relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
                 <h3 className="text-3xl font-black text-slate-800 mb-2 mt-4">{t('digital_ticket')}</h3>
@@ -580,25 +614,35 @@ function DashboardApp({ signOut }: { signOut: any }) {
                 <p className="text-slate-500 font-medium uppercase tracking-widest text-xs mb-10">{t('routed_to')} {myTicket.department}</p>
                 
                 {myQueuePosition > 0 ? (
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100"><p className="text-sm text-slate-400 font-bold uppercase tracking-widest mb-3">{t('position')}</p><p className="text-6xl font-black text-slate-800">#{myQueuePosition}</p></div>
-                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden"><div className="absolute top-0 left-0 w-full h-1 bg-blue-500 animate-pulse"></div><p className="text-sm text-slate-400 font-bold uppercase tracking-widest mb-3">{t('est_wait')}</p><p className="text-6xl font-black text-blue-600">{estimatedWait}<span className="text-xl text-slate-400 ml-1">{t('min')}</span></p></div>
-                  </div>
+                  <>
+                    <div className="grid grid-cols-2 gap-6 mb-8">
+                      <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100"><p className="text-sm text-slate-400 font-bold uppercase tracking-widest mb-3">{t('position')}</p><p className="text-6xl font-black text-slate-800">#{myQueuePosition}</p></div>
+                      <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden">
+                        <div className={`absolute top-0 left-0 w-full h-1 ${systemState.docStatus === 'EmergencyOnly' ? 'bg-red-500' : 'bg-blue-500'} animate-pulse`}></div>
+                        <p className="text-sm text-slate-400 font-bold uppercase tracking-widest mb-3">{t('est_wait')}</p>
+                        {systemState.docStatus === "EmergencyOnly" ? (
+                          <p className="text-4xl font-black text-red-600 mt-4">{t('delayed')}</p>
+                        ) : (
+                          <p className="text-6xl font-black text-blue-600">{estimatedWait}<span className="text-xl text-slate-400 ml-1">{t('min')}</span></p>
+                        )}
+                      </div>
+                    </div>
+                    {myTicket.arrivalStatus !== "Arrived" ? (
+                      <div className={`p-6 rounded-2xl border ${myQueuePosition <= 5 ? 'bg-orange-50 border-orange-200 animate-pulse' : 'bg-white border-slate-200'}`}>
+                        {myQueuePosition <= 5 && <p className="text-orange-700 font-bold mb-4">{t('almost_up')}</p>}
+                        <button onClick={markArrived} className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-lg rounded-xl shadow-md transition-colors flex items-center justify-center gap-2"><MapPinCheck size={24}/> {t('confirm_arrival')}</button>
+                      </div>
+                    ) : (<div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl font-bold flex items-center justify-center gap-2"><MapPinCheck size={20}/> {t('arrival_confirmed')}</div>)}
+                  </>
                 ) : (
                   <div className="bg-white p-10 rounded-2xl border border-emerald-200 shadow-sm">
                     {!ratingSubmitted ? (
                       <>
                         <h4 className="text-2xl font-black text-slate-800 mb-2">{t('visit_complete')}</h4>
                         <p className="text-slate-500 font-medium mb-8">{t('feedback_prompt')}</p>
-                        <div className="flex justify-center gap-2 mb-8">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <button key={star} onClick={() => submitRating(star)} onMouseEnter={() => setHoverRating(star)} onMouseLeave={() => setHoverRating(0)} className="transition-transform hover:scale-110 focus:outline-none"><Star size={40} className={`${star <= hoverRating ? 'fill-yellow-400 text-yellow-400' : 'text-slate-200'}`} /></button>
-                          ))}
-                        </div>
+                        <div className="flex justify-center gap-2 mb-8">{[1, 2, 3, 4, 5].map((star) => (<button key={star} onClick={() => submitRating(star)} onMouseEnter={() => setHoverRating(star)} onMouseLeave={() => setHoverRating(0)} className="transition-transform hover:scale-110 focus:outline-none"><Star size={40} className={`${star <= hoverRating ? 'fill-yellow-400 text-yellow-400' : 'text-slate-200'}`} /></button>))}</div>
                       </>
-                    ) : (
-                      <div className="mb-8"><div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4"><Activity size={32}/></div><h4 className="text-2xl font-black text-emerald-700">{t('feedback_saved')}</h4></div>
-                    )}
+                    ) : (<div className="mb-8"><div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4"><Activity size={32}/></div><h4 className="text-2xl font-black text-emerald-700">{t('feedback_saved')}</h4></div>)}
                     <button onClick={() => { setMyTicket(null); setActiveTab("City View"); }} className="w-full py-4 bg-slate-900 text-white font-bold rounded-xl shadow-md hover:bg-black transition-colors">{t('return_home')}</button>
                   </div>
                 )}
@@ -640,25 +684,31 @@ function DashboardApp({ signOut }: { signOut: any }) {
                   </div>
                 </div>
               </div>
-              <div className="p-6 border-t border-slate-100 bg-white flex justify-end gap-4 shrink-0">
-                <button onClick={() => setTreatingPatient(null)} className="px-6 py-3 text-slate-500 font-bold hover:bg-slate-50 rounded-xl transition-colors">Cancel</button>
-                <button onClick={finishTreatment} className="px-8 py-3 bg-slate-900 hover:bg-black text-white font-bold rounded-xl shadow-md flex items-center gap-2 transition-transform active:scale-95"><Printer size={18}/> Save to EMR & Print</button>
+              
+              {/* NEW DOCTOR TRANSFER UI PANEL */}
+              <div className="p-6 border-t border-slate-100 bg-white flex justify-between gap-4 shrink-0">
+                {showTransfer ? (
+                  <div className="flex-1 flex gap-3 items-center animate-in slide-in-from-bottom-2">
+                     <select value={transferDept} onChange={(e) => setTransferDept(e.target.value)} className="p-3 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 font-bold text-slate-700">
+                        <option value="General">General</option><option value="Cardiology">Cardiology</option><option value="Pediatrics">Pediatrics</option><option value="Orthopedics">Orthopedics</option><option value="Neurology">Neurology</option>
+                     </select>
+                     <input type="text" value={transferNotes} onChange={(e) => setTransferNotes(e.target.value)} placeholder="Reason for transfer (e.g. ECG Required)..." className="flex-1 p-3 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" />
+                     <button onClick={handleTransfer} className="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md hover:bg-blue-700 transition-colors flex items-center gap-2"><ArrowRightLeft size={18}/> Confirm Transfer</button>
+                     <button onClick={() => setShowTransfer(false)} className="px-4 py-3 text-slate-400 hover:text-slate-600 font-bold transition-colors">Cancel</button>
+                  </div>
+                ) : (
+                  <>
+                     <button onClick={() => setShowTransfer(true)} className="px-6 py-3 text-blue-600 font-bold hover:bg-blue-50 rounded-xl transition-colors flex items-center gap-2"><ArrowRightLeft size={18}/> Transfer Patient</button>
+                     <div className="flex gap-4">
+                       <button onClick={() => setTreatingPatient(null)} className="px-6 py-3 text-slate-500 font-bold hover:bg-slate-50 rounded-xl transition-colors">Cancel</button>
+                       <button onClick={finishTreatment} className="px-8 py-3 bg-slate-900 hover:bg-black text-white font-bold rounded-xl shadow-md flex items-center gap-2 transition-transform active:scale-95"><Printer size={18}/> Save to EMR & Print</button>
+                     </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
       )}
-      {treatingPatient && (
-        <div className="hidden print:block absolute top-0 left-0 w-full bg-white p-10 text-black">
-          <div className="border-b-4 border-slate-900 pb-6 mb-8 flex justify-between items-end"><div><h1 className="text-4xl font-black text-slate-900 tracking-tight">{activeHospitalName}</h1><p className="text-lg text-slate-500 font-medium">{treatingPatient.department} Department</p></div><div className="text-right"><p className="font-bold text-lg">Dr. Attending Physician</p><p className="text-slate-500 text-sm">Date: {new Date().toLocaleDateString()}</p></div></div>
-          <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-8 flex justify-between"><div><p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Patient Name</p><p className="text-2xl font-black text-slate-800">{treatingPatient.patientName}</p></div><div className="text-right"><p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Reported Symptoms</p><p className="font-bold text-slate-800">{treatingPatient.symptoms}</p></div></div>
-          <div className="mb-10"><h3 className="text-lg font-black text-slate-900 mb-3 uppercase tracking-wider border-b pb-2">Clinical Diagnosis</h3><p className="text-lg text-slate-800 leading-relaxed whitespace-pre-wrap">{prescriptionData.diagnosis || "No diagnosis recorded."}</p></div>
-          <div><h3 className="text-lg font-black text-slate-900 mb-4 uppercase tracking-wider border-b pb-2">Rx: Medicines Prescribed</h3><table className="w-full text-left border-collapse"><thead><tr className="bg-slate-100 text-slate-600"><th className="p-3 border border-slate-300">Medicine Name</th><th className="p-3 border border-slate-300 w-32">Dosage</th><th className="p-3 border border-slate-300 w-32">Duration</th></tr></thead><tbody>{prescriptionData.medicines.filter(m => m.name !== "").map((med, idx) => (<tr key={idx} className="text-slate-800 font-bold"><td className="p-3 border border-slate-300 text-lg">{med.name}</td><td className="p-3 border border-slate-300">{med.dosage}</td><td className="p-3 border border-slate-300">{med.duration}</td></tr>))}</tbody></table></div>
-        </div>
-      )}
     </div>
   );
-}
-
-export default function Home() {
-  return <Authenticator formFields={formFields}>{({ signOut }) => <DashboardApp signOut={signOut} />}</Authenticator>;
 }
