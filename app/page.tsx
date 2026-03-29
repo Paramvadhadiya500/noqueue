@@ -12,6 +12,8 @@ import {
   Settings, BarChart3, FileText, UploadCloud, Mic, MicOff, Loader2, Pill, Smartphone, CheckCircle2
 } from 'lucide-react';
 
+import { set, get, del, keys } from 'idb-keyval';
+
 Amplify.configure({ Auth: { Cognito: { userPoolId: 'ap-south-1_p039t5AGU', userPoolClientId: '2c9mnkobjqfj0rk0b2dlc1tqvn' } } });
 const formFields = { signUp: { name: { order: 1, label: 'Full Name', placeholder: 'Enter your full name', isRequired: true }, username: { order: 2 }, password: { order: 3 }, confirm_password: { order: 4 } } };
 const allTimeSlots = ["09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM", "04:30 PM"];
@@ -178,6 +180,51 @@ function DashboardApp({ signOut }: { signOut: any }) {
     }, 5000);
     return () => clearInterval(intervalId);
   }, [activeTab, selectedDept, bookingDate, treatingPatient, activeHospitalId, myTicket, userRole]);
+
+// ==========================================
+  // NEW: BACKGROUND SYNC ENGINE
+  // ==========================================
+  useEffect(() => {
+    const syncOfflineData = async () => {
+      const allKeys = await keys();
+      const offlineKeys = allKeys.filter(k => typeof k === 'string' && k.startsWith('offline_patient_'));
+      
+      if (offlineKeys.length > 0) {
+        showToast(`Syncing ${offlineKeys.length} offline records to AWS...`, "success");
+        
+        for (const key of offlineKeys) {
+          const patientData = await get(key);
+          if (patientData) {
+            try {
+              // Push to AWS
+              await fetch('/api/queue', { 
+                method: 'PUT', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify(patientData) 
+              });
+              // Delete from local storage once successful
+              await del(key);
+            } catch (err) {
+              console.error("Sync failed for", key, err);
+            }
+          }
+        }
+        showToast("All offline records synced successfully!", "success");
+        // Force a data refresh so the EMR updates
+        fetchQueue("Live", selectedDept, false);
+      }
+    };
+
+    // Listen for the exact moment the WiFi turns back on
+    window.addEventListener('online', syncOfflineData);
+    
+    // Check once on load just in case they were offline before closing the app
+    if (navigator.onLine) {
+       syncOfflineData();
+    }
+
+    return () => window.removeEventListener('online', syncOfflineData);
+  }, []);
 
   const toggleVoiceScribe = () => {
     if (isRecording) {
@@ -393,15 +440,45 @@ function DashboardApp({ signOut }: { signOut: any }) {
   const handleMedicineChange = (index: number, field: string, value: string) => { const newMedicines = [...prescriptionData.medicines]; newMedicines[index] = { ...newMedicines[index], [field]: value }; setPrescriptionData({ ...prescriptionData, medicines: newMedicines }); };
   const addMedicineRow = () => { setPrescriptionData({ ...prescriptionData, medicines: [...prescriptionData.medicines, { name: "", dosage: "", duration: "" }] }); };
 
-  const finishTreatment = async () => {
+  
+const finishTreatment = async () => {
     try {
       window.print();
-      const completedPatient = { ...treatingPatient, diagnosis: prescriptionData.diagnosis, medicines: prescriptionData.medicines.filter(m => m.name !== ""), followUpDays: prescriptionData.followUpDays, assignedDoctor: "Attending Physician" };
-      await fetch('/api/queue', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(completedPatient) });
-      showToast("Prescription saved & emailed securely!"); setTreatingPatient(null); fetchQueue("Live", selectedDept, false); 
+      const completedPatient = { 
+        ...treatingPatient, 
+        diagnosis: prescriptionData.diagnosis, 
+        medicines: prescriptionData.medicines.filter(m => m.name !== ""), 
+        followUpDays: prescriptionData.followUpDays, 
+        assignedDoctor: "Attending Physician" 
+      };
+
+      // CHECK: Is the internet dead?
+      if (!navigator.onLine) {
+        // Save to browser's internal IndexedDB using idb-keyval
+        await set(`offline_patient_${treatingPatient.Timestamp}`, completedPatient);
+        
+        showToast("⚠️ Offline Mode: Prescription saved locally. Will sync to AWS when WiFi returns.", "error");
+        setTreatingPatient(null);
+        // Remove patient from local view temporarily so doctor can move on
+        setPatients(prev => prev.filter(p => p.Timestamp !== treatingPatient.Timestamp));
+        return;
+      }
+
+      // If online, do the normal AWS fetch
+      await fetch('/api/queue', { 
+        method: 'PUT', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify(completedPatient) 
+      });
+      showToast("Prescription saved & emailed securely!"); 
+      setTreatingPatient(null); 
+      fetchQueue("Live", selectedDept, false); 
       fetch('/api/queue?department=Archive').then(res => res.json()).then(data => setArchiveData(data)).catch(console.error); 
-    } catch (error) { showToast("Error saving prescription.", "error"); }
+    } catch (error) { 
+      showToast("Error saving prescription.", "error"); 
+    }
   };
+
 
   const filteredPatients = patients.filter(p => { const s = searchTerm.toLowerCase(); return (p.patientName || "").toLowerCase().includes(s) || (p.symptoms || "").toLowerCase().includes(s); });
   

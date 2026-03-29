@@ -1,15 +1,14 @@
-import type { NextConfig } from "next";
+import withPWAInit from "@ducanh2912/next-pwa";
 
-const nextConfig: NextConfig = {
-  // This tells Next.js to intercept requests and forward them to AWS safely
-  async rewrites() {
-    return [
-      {
-        source: '/api/queue',
-        destination: 'https://mgvktchshg.execute-api.ap-south-1.amazonaws.com/default/GetSmartOPDQueue',
-      },
-    ];
-  },
+const withPWA = withPWAInit({
+  dest: "public",
+  disable: process.env.NODE_ENV === "development", 
+  register: true,
+});
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Your existing config options can stay here
 };
 
-export default nextConfig;
+export default withPWA(nextConfig);
