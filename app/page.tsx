@@ -124,24 +124,41 @@ function DashboardApp({ signOut }: { signOut: any }) {
       if(config && config.baseFee) setHospitalFee(config.baseFee);
     }).catch(console.error);
   }, [activeHospitalId]);
-
-  const fetchQueue = async (mode: string, dept: string, isAutoRefresh = false) => {
+const fetchQueue = async (mode: string, dept: string, isAutoRefresh = false) => {
     if (!isAutoRefresh) setLoading(true); 
     try {
       if (mode === "Appointments") {
-        const res = await fetch(`/api/queue?type=appointments&department=${dept}&date=${bookingDate}&hospitalId=${activeHospitalId}`);
+        const res = await fetch(`/api/queue?type=appointments&department=${dept}&date=${bookingDate}&hospitalId=${activeHospitalId}&t=${Date.now()}`);
         setAppointmentList(await res.json() || []);
       } else if (mode === "City View" || mode === "Super Panel") {
-        const res = await fetch(`/api/queue?type=all_active`);
+        const res = await fetch(`/api/queue?type=all_active&t=${Date.now()}`);
         setCityWideQueue(await res.json() || []);
       } else if (mode === "Live" && activeTab === "My Ticket" && myTicket) {
-        const res = await fetch(`/api/queue?type=all_active`);
+        
+        // --- PATIENT TICKET DATA FETCH ---
+        const res = await fetch(`/api/queue?type=all_active&t=${Date.now()}`);
         const allData = await res.json() || [];
+
+        // DEFENSE 1: Stop the crash if AWS returns an error object instead of an array
+        if (!Array.isArray(allData)) {
+           console.error("CRITICAL API ERROR ON TICKET:", allData);
+           if (!isAutoRefresh) setLoading(false);
+           return; 
+        }
+
         const myLiveRecord = allData.find((p: any) => p.Timestamp === myTicket.Timestamp);
 
         if (myLiveRecord) {
-          const deptRes = await fetch(`/api/queue?department=${myLiveRecord.department}&hospitalId=${activeHospitalId}`);
+          const deptRes = await fetch(`/api/queue?department=${myLiveRecord.department}&hospitalId=${activeHospitalId}&t=${Date.now()}`);
           const deptData = await deptRes.json() || [];
+          
+          // DEFENSE 2: Stop the crash on the nested department fetch
+          if (!Array.isArray(deptData)) {
+             console.error("CRITICAL API ERROR ON DEPT:", deptData);
+             if (!isAutoRefresh) setLoading(false);
+             return;
+          }
+
           const sysRecord = deptData.find((p: any) => p.Timestamp === "SYSTEM_STATE");
           if (sysRecord) setSystemState(sysRecord); else setSystemState({ docStatus: "Available" });
 
@@ -153,17 +170,32 @@ function DashboardApp({ signOut }: { signOut: any }) {
             if (myLiveRecord.department !== myTicket.department) { showToast(`Notice: You have been transferred to ${myLiveRecord.department}`); }
           }
         } else { setPatients([]); }
+        
       } else {
+        
+        // --- DOCTOR & ARCHIVE DATA FETCH ---
         const targetDept = mode === "Archive" ? "Archive" : dept;
-        const res = await fetch(`/api/queue?department=${targetDept}&hospitalId=${activeHospitalId}`);
-        const data = await res.json() || [];
+        const res = await fetch(`/api/queue?department=${targetDept}&hospitalId=${activeHospitalId}&t=${Date.now()}`);
+        const data = await res.json();
+        
+        // DEFENSE 3: Protect the Doctor's Dashboard
+        if (!Array.isArray(data)) {
+           console.error("API ERROR:", data);
+           setPatients([]); 
+           setLoading(false); 
+           return;
+        }
+
         const sysRecord = data.find((p: any) => p.Timestamp === "SYSTEM_STATE");
         if (sysRecord) setSystemState(sysRecord); else setSystemState({ docStatus: "Available" });
 
         const realPatients = data.filter((p: any) => p.Timestamp !== "SYSTEM_STATE");
         setPatients(realPatients);
       }
-    } catch (error) { console.error(error); }
+    } catch (error) { 
+      console.error("Network or parsing error:", error); 
+    }
+    
     if (!isAutoRefresh) setLoading(false);
   };
 
