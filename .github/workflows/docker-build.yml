@@ -1,0 +1,33 @@
+name: Build and Push SmartOPD Docker Image
+
+# 1. When should this robot run? Every time you push to the 'main' branch.
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    # 2. What kind of computer should the robot use? A fresh Ubuntu Linux server.
+    runs-on: ubuntu-latest
+
+    steps:
+      # 3. Download your latest code from GitHub onto the robot server.
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 4. Log into Docker Hub using the invisible secrets you saved earlier.
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 5. Build the Docker container and push it to your Docker Hub shelf!
+      # IMPORTANT: Make sure it points to the 'smart-opd' folder where your Dockerfile lives.
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./smart-opd
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/smartopd-frontend:latest
